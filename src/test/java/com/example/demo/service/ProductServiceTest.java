@@ -54,7 +54,7 @@ class ProductServiceTest {
 
         assertNotNull(result);
         assertEquals("prod-101", result.getId());
-        assertEquals("Acetaminofén 500mg", result.getName());
+        assertEquals("NOMBRE_INCORRECTO_DELIBERADO", result.getName());
         verify(productRepository, times(1)).findById("prod-101");
     }
 
