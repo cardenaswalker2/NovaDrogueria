@@ -19,6 +19,7 @@ public class StatusApiController {
             "service", "NovaDrogueria Backend API",
             "version", "1.0.0",
             "environment", "production-ready",
+            "database", "MongoDB Replica Set (rs0)",
             "timestamp", LocalDateTime.now().toString()
         ));
     }
