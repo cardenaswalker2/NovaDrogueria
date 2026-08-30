@@ -60,14 +60,12 @@ def build_pdf(filename="taller-cicd-springboot_cardenas-walker.pdf"):
         bottomMargin=45
     )
 
-    # Theme colors
     primary = colors.HexColor("#0F294A")
     secondary = colors.HexColor("#2B6CB0")
     dark_text = colors.HexColor("#1A202C")
     light_bg = colors.HexColor("#F7FAFC")
     border_color = colors.HexColor("#E2E8F0")
 
-    # Typography
     title_style = ParagraphStyle(
         'DocTitle',
         fontName='Helvetica-Bold',
@@ -138,7 +136,6 @@ def build_pdf(filename="taller-cicd-springboot_cardenas-walker.pdf"):
     story.append(Paragraph("<b>Integrantes:</b> Luis Cardenas | Cristobal Villamil | Daniel Gutierrez | Jose Castillo", subtitle_style))
     story.append(HRFlowable(width="100%", thickness=1.5, color=primary, spaceBefore=1, spaceAfter=4))
 
-    # Meta Table
     meta_data = [
         [Paragraph("<b>Entorno & Stack</b>", body_bold), Paragraph("Java 17 (Temurin LTS), Spring Boot 3.4.2, Maven 3.9.11, MongoDB Replica Set (rs0)", body_style)],
         [Paragraph("<b>Pipeline Triggers</b>", body_bold), Paragraph("Push en <code>main</code>, <code>develop</code>, <code>chore/**</code>, <code>feature/**</code> | Pull Requests hacia <code>main</code>", body_style)],
@@ -161,7 +158,6 @@ def build_pdf(filename="taller-cicd-springboot_cardenas-walker.pdf"):
     story.append(Paragraph("1. Preparación del Repositorio y Validación del Build Original", h1_style))
     story.append(Paragraph("El proyecto NovaDrogueria se auditó técnicamente manteniendo intactas todas sus funcionalidades farmacéuticas (gestión de catálogo, inventario, control de apartados y transacciones multi-documento). Se validó la compatibilidad de Java 17 y Spring Boot 3.4.2, ejecutando <code>mvn clean package</code> con resultado <b>BUILD SUCCESS</b>.", body_style))
 
-    # Imagen Build Local
     img1_path = os.path.join(img_dir, "01-build-local.png")
     if os.path.exists(img1_path):
         story.append(Image(img1_path, width=540, height=195))
@@ -181,7 +177,7 @@ def build_pdf(filename="taller-cicd-springboot_cardenas-walker.pdf"):
     img2_path = os.path.join(img_dir, "02-actions-success.png")
     if os.path.exists(img2_path):
         story.append(Image(img2_path, width=540, height=185))
-        story.append(Paragraph("<b>Figura 2.1:</b> Ejecución exitosa de GitHub Actions en la rama principal (Run ID: 33326051794).", caption_style))
+        story.append(Paragraph("<b>Figura 2.1:</b> Ejecución exitosa de GitHub Actions en la validación continua (Run ID: 33327021879).", caption_style))
 
     story.append(Paragraph("4. Pruebas Unitarias y de Controlador Realizadas", h1_style))
     story.append(Paragraph("Se desarrollaron 10 pruebas nuevas que se integraron a las 16 preexistentes, alcanzando un total de <b>26 pruebas automáticas reales</b>:", body_style))
@@ -209,7 +205,7 @@ def build_pdf(filename="taller-cicd-springboot_cardenas-walker.pdf"):
     img3_path = os.path.join(img_dir, "03-tests-success.png")
     if os.path.exists(img3_path):
         story.append(Image(img3_path, width=540, height=160))
-        story.append(Paragraph("<b>Figura 2.2:</b> Detalle de ejecución del job 'Build, Test & JaCoCo Coverage' validado con éxito.", caption_style))
+        story.append(Paragraph("<b>Figura 2.2:</b> Detalle de ejecución del job 'Build, Test & JaCoCo Coverage' validando los 26 tests en verde.", caption_style))
 
     story.append(PageBreak())
 
@@ -249,15 +245,15 @@ def build_pdf(filename="taller-cicd-springboot_cardenas-walker.pdf"):
     story.append(PageBreak())
 
     # ==========================================
-    # PÁGINA 4: Pull Request, Seguridad y Reflexión
+    # PÁGINA 4: Pull Request Real, Seguridad y Reflexión
     # ==========================================
     story.append(Paragraph("7. Pull Request Real, Feature Branch y Branch Protection", h1_style))
-    story.append(Paragraph("Se creó la rama <code>feature/endpoint-estado</code> incorporando el endpoint <code>GET /api/estado</code>. La rama <code>main</code> cuenta con protección de rama (<i>Require status checks to pass before merging</i>), garantizando que ningún cambio pueda fusionarse a <code>main</code> sin superar los checks obligatorios del pipeline.", body_style))
+    story.append(Paragraph("Se creó la rama <code>feature/endpoint-estado</code> y se abrió el <b>Pull Request oficial #1</b> hacia <code>main</code>. Se validaron los checks automáticos del pipeline y se aplicó la regla de protección en <code>main</code> (<i>Require status checks to pass before merging</i>), culminando con la fusión formal (*Merged*).", body_style))
 
     img10_path = os.path.join(img_dir, "10-pull-request.png")
     if os.path.exists(img10_path):
         story.append(Image(img10_path, width=540, height=160))
-        story.append(Paragraph("<b>Figura 4.1:</b> Vista de comparación y Pull Request de <code>feature/endpoint-estado</code> hacia <code>main</code> con validación continua.", caption_style))
+        story.append(Paragraph("<b>Figura 4.1:</b> Pull Request oficial #1 en GitHub con checks de CI/CD aprobados y estado Merged.", caption_style))
 
     story.append(Paragraph("8. Gestión de Secretos en GitHub Actions", h1_style))
     story.append(Paragraph("Se configuró el secreto de entorno <code>APP_ENV_DEMO</code> en el repositorio. El pipeline lo consume vía <code>${{ secrets.APP_ENV_DEMO }}</code> realizando una verificación enmascarada con huella SHA-256 en consola, sin exponer nunca el valor en texto plano.", body_style))

@@ -91,15 +91,18 @@
 
 ## 🔒 Branch Protection
 - **Rama Protegida**: `main`
-- **Regla Configurada**: *Require status checks to pass before merging* asociado al job `Build, Test & JaCoCo Coverage`.
+- **Regla Configurada**: *Require status checks to pass before merging* (Strict: true) asociado al contexto de comprobación obligatorio `Build, Test & JaCoCo Coverage`.
 
 ---
 
 ## 🔀 Pull Request
+- **Número de PR**: `#1`
+- **Título**: `feat: endpoint de estado del sistema y telemetría de salud (GET /api/estado)`
 - **Rama Origen**: `feature/endpoint-estado`
 - **Rama Destino**: `main`
-- **URL de Comparación / PR**: [https://github.com/cardenaswalker2/NovaDrogueria/compare/main...feature/endpoint-estado](https://github.com/cardenaswalker2/NovaDrogueria/compare/main...feature/endpoint-estado)
-- **Estado de Validación**: Pipeline verde comprobado en la rama feature antes de la integración.
+- **URL Oficial**: [https://github.com/cardenaswalker2/NovaDrogueria/pull/1](https://github.com/cardenaswalker2/NovaDrogueria/pull/1)
+- **Checks de CI/CD**: Job `Build, Test & JaCoCo Coverage` ejecutado y aprobado en verde (Run ID: `33327021879`).
+- **Estado Final**: `Merged` (Fusionado con éxito a la rama `main`).
 
 ---
 
