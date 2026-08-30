@@ -1,0 +1,22 @@
+=== AUDITORIA DE ENTORNO - FASE 1 ===
+
+Fecha y Hora: 2026-08-30 12:31:13
+OS: Windows 11
+Java Runtime:
+openjdk version "17.0.16" 2025-07-15 OpenJDK Runtime Environment Temurin-17.0.16+8 (build 17.0.16+8) OpenJDK 64-Bit Server VM Temurin-17.0.16+8 (build 17.0.16+8, mixed mode, sharing)
+
+Maven Version:
+Apache Maven 3.9.11 (3e54c93a704957b63ee3494413a2b544fd3d825b) Maven home: C:\Users\USUARIO\Downloads\apache-maven-3.9.11-bin\apache-maven-3.9.11 Java version: 17.0.16, vendor: Eclipse Adoptium, runtime: C:\Program Files\Eclipse Adoptium\jdk-17.0.16.8-hotspot Default locale: es_CO, platform encoding: Cp1252 OS name: "windows 11", version: "10.0", arch: "amd64", family: "windows"
+
+Git Branch Actual:
+chore/taller-cicd
+
+Git Remotes:
+origin	https://github.com/cardenaswalker2/NovaDrogueria.git (fetch) origin	https://github.com/cardenaswalker2/NovaDrogueria.git (push)
+
+Git Status:
+On branch chore/taller-cicd nothing to commit, working tree clean
+
+MongoDB Engine:
+db version v8.0.13 Build Info: {     "version": "8.0.13",     "gitVersion": "8dc5cd2a30c4524132e2d44bb314544dc477e611",     "modules": [],     "allocator": "tcmalloc-gperf",     "environment": {         "distmod": "windows"     } }
+

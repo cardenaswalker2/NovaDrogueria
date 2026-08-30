@@ -36,4 +36,7 @@ build/
 db_data/
 *.log
 mongodb.log
+.env
+application-local.properties
+
 

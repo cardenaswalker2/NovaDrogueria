@@ -1,0 +1,24 @@
+=== REPORTE DE COBERTURA JACOCO - FASE 9 ===
+Fecha de Generación: 2026-08-30
+Herramienta: org.jacoco:jacoco-maven-plugin:0.8.12
+Ubicación del Reporte: target/site/jacoco/index.html
+
+MÉTRICAS GLOBALES REALES:
+- Cobertura de Instrucciones: 29% (1,772 / 6,018 cubiertas)
+- Cobertura de Ramas (Branches): 25% (103 / 399 cubiertas)
+- Cobertura de Líneas: 29% (353 / 1,201 cubiertas)
+- Cobertura de Métodos: 37% (120 / 320 cubiertos)
+- Clases Analizadas: 32 (27 con cobertura)
+
+DETALLE POR PAQUETE:
+- com.example.demo.util: 88% instrucciones | 74% ramas (Utilidades de Formato Colombiano)
+- com.example.demo.security: 80% instrucciones | 0% ramas (Configuración de Seguridad)
+- com.example.demo.service: 37% instrucciones | 32% ramas (Servicios de Negocio y Productos)
+- com.example.demo: 37% instrucciones
+- com.example.demo.model: 33% instrucciones
+- com.example.demo.exception: 22% instrucciones
+- com.example.demo.config: 9% instrucciones
+- com.example.demo.controller: 4% instrucciones
+- com.example.demo.dto: 0% instrucciones
+
+ESTADO: GENERACIÓN EXITOSA Y COMPROBADA

@@ -1,0 +1,60 @@
+name: CI/CD Pipeline - NovaDrogueria
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'chore/**'
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    name: Build, Test & JaCoCo Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Start MongoDB Replica Set (rs0)
+        run: |
+          docker run -d --name mongodb -p 27017:27017 mongo:7.0 --replSet rs0
+          sleep 4
+          docker exec mongodb mongosh --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'localhost:27017'}]})"
+          sleep 2
+          docker exec mongodb mongosh --eval "rs.status().ok"
+
+      - name: Build & Run Tests with JaCoCo
+        run: mvn -B clean package jacoco:report
+
+      - name: Verify Secret Configuration
+        env:
+          DEMO_SECRET: ${{ secrets.APP_ENV_DEMO }}
+        run: |
+          echo "=== Verificacion segura de Secretos ==="
+          if [ -n "$DEMO_SECRET" ]; then
+            echo "Secreto APP_ENV_DEMO detectado: Presente (valor enmascarado por GitHub Actions)"
+            # Verificacion sin revelar valor: longitud y hash sha256
+            echo -n "$DEMO_SECRET" | sha256sum | awk '{print "SHA256 Fingerprint: " $1}'
+          else
+            echo "Aviso: Secreto APP_ENV_DEMO no configurado todavia en Secrets."
+          fi
+
+      - name: Upload JaCoCo Coverage Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reporte-jacoco
+          path: target/site/jacoco
+          retention-days: 14
