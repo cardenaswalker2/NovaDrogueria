@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${product.name})}">
+</head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header('catalog')}"></header>
+
+    <div class="container" style="padding-top: 4rem; padding-bottom: 6rem;">
+        
+        <!-- Breadcrumb link -->
+        <div style="margin-bottom: 2rem;">
+            <a href="/catalogo" style="color: #0d9488; font-weight: 500;"><i class="fa-solid fa-arrow-left"></i> Volver al Catálogo</a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 4rem; align-items: start;">
+            
+            <!-- Image Card -->
+            <div style="background-color: white; border: 1px solid #e2e8f0; border-radius: 1.5rem; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);">
+                <img th:src="${product.imageUrl}" th:alt="${product.name}" style="width: 100%; max-height: 450px; object-fit: cover;">
+            </div>
+
+            <!-- Detail Info Section -->
+            <div>
+                <!-- Brand and Category tags -->
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                    <span th:text="${category.name}" style="background-color: #ccfbf1; color: #0f766e; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 600;"></span>
+                    <span th:text="${product.brand}" style="background-color: #f1f5f9; color: #475569; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 600;"></span>
+                </div>
+
+                <h1 th:text="${product.name}" style="font-size: 2.5rem; font-weight: 700; color: #0f172a; margin: 0 0 1rem 0;"></h1>
+
+                 <div style="display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <span th:text="${currencyFormatter.format(product.price)}" style="font-size: 2.25rem; font-weight: 800; color: #0f172a;"></span>
+                        
+                        <!-- Availability indicators -->
+                        <div>
+                            <span th:if="${product.stock > 5}" style="color: #059669; font-weight: 600; font-size: 0.95rem;">🟢 Disponible (stock: <span th:text="${product.stock}"></span>)</span>
+                            <span th:if="${product.stock > 0 && product.stock <= 5}" style="color: #d97706; font-weight: 600; font-size: 0.95rem;">🟡 Poco Stock (stock: <span th:text="${product.stock}"></span>)</span>
+                            <span th:if="${product.stock == 0}" style="color: #dc2626; font-weight: 600; font-size: 0.95rem;">🔴 Agotado</span>
+                        </div>
+                    </div>
+                    <span th:text="${currencyFormatter.formatToWords(product.price)}" style="font-size: 0.9rem; color: #64748b; font-weight: 500; line-height: 1.3;"></span>
+                </div>
+
+                <p th:text="${product.description}" style="color: #475569; font-size: 1.1rem; line-height: 1.6; margin-bottom: 2.5rem;"></p>
+
+                <!-- Dynamic technical specifications -->
+                <div style="background-color: white; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.5rem; margin-bottom: 2.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                    <h3 style="font-size: 1.15rem; margin-top: 0; margin-bottom: 1rem; font-weight: 600; color: #0f172a; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">Información Técnica</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem;">
+                        <tr th:if="${product.activeIngredient != null && !product.activeIngredient.isEmpty()}">
+                            <td style="padding: 0.5rem 0; color: #64748b; font-weight: 500; width: 40%;">Principio Activo:</td>
+                            <td th:text="${product.activeIngredient}" style="padding: 0.5rem 0; color: #0f172a; font-weight: 600;"></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem 0; color: #64748b; font-weight: 500;">Presentación:</td>
+                            <td th:text="${product.presentation}" style="padding: 0.5rem 0; color: #0f172a; font-weight: 600;"></td>
+                        </tr>
+                        <tr th:if="${product.additionalInfo != null && !product.additionalInfo.isEmpty()}">
+                            <td style="padding: 0.5rem 0; color: #64748b; font-weight: 500;">Indicaciones:</td>
+                            <td th:text="${product.additionalInfo}" style="padding: 0.5rem 0; color: #0f172a;"></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Warnings alert if registered -->
+                <div th:if="${product.warnings != null && !product.warnings.isEmpty()}" style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 1.25rem; border-radius: 0.5rem; margin-bottom: 2.5rem;">
+                    <div style="display: flex; gap: 0.75rem;">
+                        <i class="fa-solid fa-triangle-exclamation" style="color: #d97706; font-size: 1.25rem; margin-top: 0.1rem;"></i>
+                        <div>
+                            <h4 style="margin: 0 0 0.25rem 0; color: #92400e; font-weight: 600;">Advertencias</h4>
+                            <p th:text="${product.warnings}" style="margin: 0; color: #b45309; font-size: 0.95rem;"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div style="margin-bottom: 2.5rem;">
+                    <a th:if="${product.stock > 0}" th:href="@{'/apartados/crear?productId=' + ${product.id}}" class="btn btn-primary" style="padding: 1rem 3rem; font-size: 1.1rem; width: 100%; box-sizing: border-box;">
+                        <i class="fa-solid fa-cart-flatbed-suitcase"></i> Apartar Producto
+                    </a>
+                    <button th:if="${product.stock == 0}" class="btn" style="background-color: #e2e8f0; color: #94a3b8; padding: 1rem 3rem; font-size: 1.1rem; width: 100%; cursor: not-allowed; box-sizing: border-box;" disabled>
+                        Producto Agotado
+                    </button>
+                </div>
+
+                <!-- Medical info disclaimer -->
+                <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 1rem; border-radius: 0.5rem; font-size: 0.85rem; color: #64748b; display: flex; gap: 0.5rem; align-items: start;">
+                    <i class="fa-solid fa-circle-info" style="color: #0ea5e9; font-size: 1rem; margin-top: 0.1rem;"></i>
+                    <p style="margin: 0;">La información presentada sobre este producto es de carácter estrictamente informativo y referencial, extraída según las pautas registradas. No sustituye la prescripción médica ni la orientación de un profesional de la salud calificado.</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin-layout :: head('Gestión de Productos')}">
+</head>
+<body>
+
+    <aside th:replace="~{fragments/admin-layout :: sidebar('products')}"></aside>
+
+    <main class="main-content">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+            <h1 style="font-size: 2.25rem; font-weight: 700; color: #0f172a; margin: 0;">Productos</h1>
+            <a href="/admin/productos/crear" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Nuevo Producto
+            </a>
+        </div>
+
+        <div th:if="${successMessage != null}" class="alert alert-success">
+            <i class="fa-solid fa-check-double"></i> <span th:text="${successMessage}"></span>
+        </div>
+
+        <div class="card" style="padding: 1.5rem;">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Marca</th>
+                            <th>Presentación</th>
+                            <th>Precio</th>
+                            <th>Inventario</th>
+                            <th>Destacado</th>
+                            <th>Público</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="prod : ${products}">
+                            <td>
+                                <strong th:text="${prod.name}" style="color: #0f172a; display: block;"></strong>
+                                <span th:text="${prod.activeIngredient}" style="font-size: 0.8rem; color: var(--text-muted);"></span>
+                            </td>
+                            <td th:text="${prod.brand}"></td>
+                            <td th:text="${prod.presentation}"></td>
+                            <td th:text="${currencyFormatter.format(prod.price)}" style="font-weight: 600;"></td>
+                            <td>
+                                <span th:text="${prod.stock}" style="font-weight: 700;"></span>
+                                <span th:if="${prod.stock <= 5 && prod.stock > 0}" style="color: #d97706; display: block; font-size: 0.8rem; font-weight: 600;">⚠️ Bajo Stock</span>
+                                <span th:if="${prod.stock == 0}" style="color: #dc2626; display: block; font-size: 0.8rem; font-weight: 600;">🔴 Agotado</span>
+                            </td>
+                            <td>
+                                <span th:if="${prod.featured}" style="color: #0d9488; font-weight: 600;"><i class="fa-solid fa-star"></i> Destacado</span>
+                                <span th:if="${!prod.featured}" style="color: var(--text-muted);">-</span>
+                            </td>
+                            <td>
+                                <span th:if="${prod.active}" style="color: #10b981; font-weight: 600;">Sí</span>
+                                <span th:if="${!prod.active}" style="color: #f43f5e; font-weight: 600;">Inactivo</span>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <a th:href="@{'/admin/productos/editar/' + ${prod.id}}" class="btn btn-outline btn-sm">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                    <form th:action="@{'/admin/productos/eliminar/' + ${prod.id}}" method="post" onsubmit="return confirm('¿Está seguro de que desea desactivar/eliminar este producto? El cambio ocultará el producto del catálogo público pero conservará el histórico.');">
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(products)}">
+                            <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 3rem 0;">No hay productos registrados en la base de datos.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

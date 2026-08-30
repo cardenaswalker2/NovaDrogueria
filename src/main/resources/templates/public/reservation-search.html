@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Consultar Apartados')}">
+</head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header('search')}"></header>
+
+    <div class="container" style="padding-top: 5rem; padding-bottom: 7rem; max-width: 550px;">
+        
+        <!-- Header -->
+        <h1 style="font-size: 2.25rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem; text-align: center;">Consultar Apartados</h1>
+        <p style="color: #64748b; text-align: center; margin-bottom: 2.5rem; font-size: 1rem; padding: 0 1rem;">
+            Realiza el seguimiento de tus medicamentos apartados de forma fácil y segura.
+        </p>
+
+        <!-- No Results / Not Found panel state -->
+        <div th:if="${noResults}" style="background-color: white; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 3rem 2rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); text-align: center; margin-bottom: 2rem;">
+            <div style="width: 4rem; height: 4rem; background-color: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; font-size: 2rem; color: #64748b;">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: #0f172a; margin: 0 0 0.75rem 0;">No encontramos apartados asociados</h3>
+            <p style="color: #64748b; font-size: 0.95rem; line-height: 1.5; margin: 0 0 2rem 0;">
+                Verifica que hayas utilizado el mismo número registrado al realizar tu apartado o intenta con otra opción.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <a href="/apartados/buscar" class="btn btn-primary" style="padding: 0.85rem;"><i class="fa-solid fa-rotate-left"></i> Intentar nuevamente</a>
+                <a href="/catalogo" class="btn btn-outline" style="border: 1px solid var(--primary); color: var(--primary); padding: 0.85rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600;"><i class="fa-solid fa-prescription-bottle-medical"></i> Ver catálogo</a>
+                <a href="https://wa.me/573005722844" target="_blank" class="btn" style="background-color: #25d366; color: white; padding: 0.85rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600;"><i class="fa-brands fa-whatsapp"></i> Contactar por WhatsApp</a>
+            </div>
+        </div>
+
+        <!-- Lookup Form options Container -->
+        <div th:unless="${noResults}" style="background-color: white; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 2.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);">
+            
+            <!-- Error messages -->
+            <div th:if="${errorMessage != null}" style="background-color: #ffe4e6; border: 1px solid #fecdd3; color: #991b1b; padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem; font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-circle-exclamation"></i> <span th:text="${errorMessage}"></span>
+            </div>
+
+            <!-- Tab Navigation (Accessible controls) -->
+            <div style="display: flex; background-color: #f1f5f9; border-radius: 0.75rem; padding: 0.25rem; margin-bottom: 2rem;" role="tablist">
+                <button type="button" id="tab-code" role="tab" aria-selected="true" aria-controls="panel-code" class="tab-btn active" style="flex: 1; border: none; padding: 0.75rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: white; color: #0f172a;">
+                    <i class="fa-solid fa-lock"></i> Tengo mi código
+                </button>
+                <button type="button" id="tab-phone" role="tab" aria-selected="false" aria-controls="panel-phone" class="tab-btn" style="flex: 1; border: none; padding: 0.75rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: transparent; color: #64748b;">
+                    <i class="fa-solid fa-phone"></i> Buscar por teléfono
+                </button>
+            </div>
+
+            <!-- Option A: Code + Phone lookup form -->
+            <div id="panel-code" role="tabpanel" aria-labelledby="tab-code">
+                <form id="form-code" th:action="@{/apartados/buscar}" method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <input type="hidden" name="searchType" value="code">
+                    
+                    <div>
+                        <label for="code" style="display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; color: #475569;">Código de Apartado</label>
+                        <input type="text" id="code" name="code" th:value="${code}" placeholder="Ej. NOVA-FJF3EW" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.75rem; border-radius: 0.5rem; outline: none; font-size: 1rem; box-sizing: border-box; text-transform: uppercase;">
+                    </div>
+
+                    <div>
+                        <label for="phone-code-form" style="display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; color: #475569;">Celular Registrado</label>
+                        <input type="text" id="phone-code-form" name="phone" th:value="${phone}" placeholder="Ej. 3001234567" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.75rem; border-radius: 0.5rem; outline: none; font-size: 1rem; box-sizing: border-box;">
+                    </div>
+
+                    <div style="margin-top: 1rem;">
+                        <button type="submit" class="btn btn-primary submit-btn" style="width: 100%; padding: 1rem; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-magnifying-glass"></i> Consultar apartado
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Option B: Phone only lookup form -->
+            <div id="panel-phone" role="tabpanel" aria-labelledby="tab-phone" style="display: none;">
+                <form id="form-phone" th:action="@{/apartados/buscar}" method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <input type="hidden" name="searchType" value="phone">
+                    
+                    <div>
+                        <label for="phone-phone-form" style="display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; color: #475569;">Número de celular</label>
+                        <input type="text" id="phone-phone-form" name="phone" th:value="${phone}" placeholder="Ej. 300 572 2844" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.75rem; border-radius: 0.5rem; outline: none; font-size: 1rem; box-sizing: border-box;">
+                    </div>
+
+                    <div style="margin-top: 1rem;">
+                        <button type="submit" class="btn btn-primary submit-btn" style="width: 100%; padding: 1rem; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-magnifying-glass"></i> Buscar mis apartados
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Loading overlay inside card -->
+            <div id="lookup-loading-overlay" style="display: none; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: 2rem 0;">
+                <div style="border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
+                <strong style="color: #0f172a;">Buscando tus apartados...</strong>
+                <p style="color: #64748b; font-size: 0.85rem; margin: 0;">Espera un momento por favor</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Hidden inline CSS styles definitions to keep template clean -->
+    <style>
+        .tab-btn {
+            transition: all 0.2s ease;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <!-- Interactive Tabs switcher and spinner protection -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const tabCode = document.getElementById("tab-code");
+            const tabPhone = document.getElementById("tab-phone");
+            const panelCode = document.getElementById("panel-code");
+            const panelPhone = document.getElementById("panel-phone");
+            const forms = document.querySelectorAll("form");
+            const loadingOverlay = document.getElementById("lookup-loading-overlay");
+
+            // Handle Tab navigation click
+            tabCode.addEventListener("click", () => selectTab("code"));
+            tabPhone.addEventListener("click", () => selectTab("phone"));
+
+            function selectTab(type) {
+                if (type === "code") {
+                    tabCode.setAttribute("aria-selected", "true");
+                    tabCode.style.backgroundColor = "white";
+                    tabCode.style.color = "#0f172a";
+                    
+                    tabPhone.setAttribute("aria-selected", "false");
+                    tabPhone.style.backgroundColor = "transparent";
+                    tabPhone.style.color = "#64748b";
+
+                    panelCode.style.display = "block";
+                    panelPhone.style.display = "none";
+                } else {
+                    tabPhone.setAttribute("aria-selected", "true");
+                    tabPhone.style.backgroundColor = "white";
+                    tabPhone.style.color = "#0f172a";
+                    
+                    tabCode.setAttribute("aria-selected", "false");
+                    tabCode.style.backgroundColor = "transparent";
+                    tabCode.style.color = "#64748b";
+
+                    panelPhone.style.display = "block";
+                    panelCode.style.display = "none";
+                }
+            }
+
+            // Keep correct tab active if returning with values / error triggers
+            const searchType = "[[${searchType}]]";
+            if (searchType === "phone") {
+                selectTab("phone");
+            }
+
+            // Spinner loader overlay triggering
+            forms.forEach(form => {
+                form.addEventListener("submit", function() {
+                    panelCode.style.display = "none";
+                    panelPhone.style.display = "none";
+                    loadingOverlay.style.display = "flex";
+                    
+                    // Disable tabs to prevent double requests
+                    tabCode.disabled = true;
+                    tabPhone.disabled = true;
+                });
+            });
+        });
+    </script>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

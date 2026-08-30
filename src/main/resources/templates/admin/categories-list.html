@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin-layout :: head('Gestión de Categorías')}">
+</head>
+<body>
+
+    <aside th:replace="~{fragments/admin-layout :: sidebar('categories')}"></aside>
+
+    <main class="main-content">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+            <h1 style="font-size: 2.25rem; font-weight: 700; color: #0f172a; margin: 0;">Categorías</h1>
+            <a href="/admin/categorias/crear" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Nueva Categoría
+            </a>
+        </div>
+
+        <div th:if="${successMessage != null}" class="alert alert-success">
+            <i class="fa-solid fa-check"></i> <span th:text="${successMessage}"></span>
+        </div>
+
+        <div th:if="${errorMessage != null}" class="alert alert-error">
+            <i class="fa-solid fa-triangle-exclamation"></i> <span th:text="${errorMessage}"></span>
+        </div>
+
+        <div class="card" style="padding: 1.5rem;">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Slug</th>
+                            <th>Descripción</th>
+                            <th>Público</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="cat : ${categories}">
+                            <td><strong th:text="${cat.name}" style="color: #0f172a;"></strong></td>
+                            <td th:text="${cat.slug}" style="font-family: monospace;"></td>
+                            <td th:text="${cat.description}"></td>
+                            <td>
+                                <span th:if="${cat.active}" style="color: #10b981; font-weight: 600;">Sí</span>
+                                <span th:if="${!cat.active}" style="color: #f43f5e; font-weight: 600;">Inactivo</span>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <a th:href="@{'/admin/categorias/editar/' + ${cat.id}}" class="btn btn-outline btn-sm">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                    <form th:action="@{'/admin/categorias/eliminar/' + ${cat.id}}" method="post" onsubmit="return confirm('¿Está seguro de que desea eliminar esta categoría? Si posee productos asociados, se desactivará de forma segura.');">
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(categories)}">
+                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 3rem 0;">No hay categorías registradas en el sistema.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

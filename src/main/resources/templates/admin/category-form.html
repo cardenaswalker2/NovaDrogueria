@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin-layout :: head('Registrar Categoría')}">
+</head>
+<body>
+
+    <aside th:replace="~{fragments/admin-layout :: sidebar('categories')}"></aside>
+
+    <main class="main-content">
+        <h1 style="font-size: 2.25rem; font-weight: 700; color: #0f172a; margin-bottom: 2rem;" 
+            th:text="${categoryDTO.id == null ? 'Registrar Categoría' : 'Editar Categoría'}"></h1>
+
+        <div th:if="${errorMessage != null}" class="alert alert-error">
+            <i class="fa-solid fa-circle-exclamation"></i> <span th:text="${errorMessage}"></span>
+        </div>
+
+        <div class="card" style="max-width: 600px;">
+            <form th:action="${categoryDTO.id == null ? '/admin/categorias/crear' : '/admin/categorias/editar/' + categoryDTO.id}" th:object="${categoryDTO}" method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <input type="hidden" th:field="*{id}">
+
+                <!-- Name -->
+                <div class="form-group">
+                    <label for="name" class="form-label">Nombre de la Categoría *</label>
+                    <input type="text" id="name" th:field="*{name}" class="form-control" placeholder="Ej. Medicamentos" oninput="generateSlug(this.value)">
+                    <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: #ef4444; font-size: 0.85rem; margin-top: 0.35rem;"></p>
+                </div>
+
+                <!-- Slug -->
+                <div class="form-group">
+                    <label for="slug" class="form-label">Slug de Navegación *</label>
+                    <input type="text" id="slug" th:field="*{slug}" class="form-control" placeholder="medicamentos">
+                    <p th:if="${#fields.hasErrors('slug')}" th:errors="*{slug}" style="color: #ef4444; font-size: 0.85rem; margin-top: 0.35rem;"></p>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="description" class="form-label">Descripción</label>
+                    <textarea id="description" th:field="*{description}" rows="3" class="form-control" placeholder="Descripción breve..."></textarea>
+                </div>
+
+                <!-- Active -->
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 500; cursor: pointer;">
+                        <input type="checkbox" th:field="*{active}"> Categoría activa
+                    </label>
+                </div>
+
+                <div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Categoría
+                    </button>
+                    <a href="/admin/categorias" class="btn btn-outline">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        function generateSlug(text) {
+            var slug = text.toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+            document.getElementById('slug').value = slug;
+        }
+    </script>
+</body>
+</html>

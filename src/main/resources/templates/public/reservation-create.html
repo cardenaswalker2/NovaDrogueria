@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Apartar Producto')}">
+</head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header('catalog')}"></header>
+
+    <div class="container" style="padding-top: 3rem; padding-bottom: 6rem; max-width: 650px;">
+        <h1 style="font-size: 2.25rem; font-weight: 700; color: #0f172a; margin-bottom: 2rem; text-align: center;">Apartar Producto</h1>
+
+        <!-- Product Summary Header -->
+        <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 1.5rem;">
+            <img th:src="${product.imageUrl}" th:alt="${product.name}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 0.5rem;">
+            <div>
+                <h3 th:text="${product.name}" style="margin: 0 0 0.25rem 0; font-weight: 600; color: #14532d; font-size: 1.15rem;"></h3>
+                <p th:text="${product.presentation}" style="margin: 0 0 0.5rem 0; color: #166534; font-size: 0.9rem;"></p>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #14532d; display: flex; flex-direction: column; gap: 0.15rem;">
+                    <div>Precio Unitario: <span th:text="${currencyFormatter.format(product.price)}"></span></div>
+                    <span th:text="${currencyFormatter.formatToWords(product.price)}" style="font-size: 0.8rem; color: #15803d; font-weight: 500;"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reservation submission form -->
+        <div style="background-color: white; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 2.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);">
+            
+            <div th:if="${errorMessage != null}" style="background-color: #ffe4e6; border: 1px solid #fecdd3; color: #991b1b; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; font-weight: 500; font-size: 0.95rem;">
+                <i class="fa-solid fa-circle-exclamation"></i> <span th:text="${errorMessage}"></span>
+            </div>
+
+            <form th:action="@{/apartados/crear}" th:object="${reservationDTO}" method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <input type="hidden" th:field="*{productId}">
+
+                <!-- Customer Name -->
+                <div>
+                    <label for="customerName" style="display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; color: #475569;">Nombre Completo *</label>
+                    <input type="text" id="customerName" th:field="*{customerName}" placeholder="Ej. Juan Pérez" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.75rem; border-radius: 0.5rem; outline: none; font-size: 1rem; box-sizing: border-box;">
+                    <p th:if="${#fields.hasErrors('customerName')}" th:errors="*{customerName}" style="color: #ef4444; font-size: 0.85rem; margin: 0.35rem 0 0 0; font-weight: 500;"></p>
+                </div>
+
+                <!-- Customer Phone -->
+                <div>
+                    <label for="customerPhone" style="display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; color: #475569;">Número de Celular *</label>
+                    <input type="text" id="customerPhone" th:field="*{customerPhone}" placeholder="Ej. 3001234567" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.75rem; border-radius: 0.5rem; outline: none; font-size: 1rem; box-sizing: border-box;">
+                    <p th:if="${#fields.hasErrors('customerPhone')}" th:errors="*{customerPhone}" style="color: #ef4444; font-size: 0.85rem; margin: 0.35rem 0 0 0; font-weight: 500;"></p>
+                </div>
+
+                <!-- Customer Email -->
+                <div>
+                    <label for="customerEmail" style="display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; color: #475569;">Correo Electrónico (Opcional)</label>
+                    <input type="email" id="customerEmail" th:field="*{customerEmail}" placeholder="Ej. juan@correo.com" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.75rem; border-radius: 0.5rem; outline: none; font-size: 1rem; box-sizing: border-box;">
+                    <p th:if="${#fields.hasErrors('customerEmail')}" th:errors="*{customerEmail}" style="color: #ef4444; font-size: 0.85rem; margin: 0.35rem 0 0 0; font-weight: 500;"></p>
+                </div>
+
+                <!-- Quantity -->
+                <div>
+                    <label for="quantity" style="display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; color: #475569;">Cantidad a Apartar *</label>
+                    <input type="number" id="quantity" th:field="*{quantity}" min="1" th:max="${product.stock}" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.75rem; border-radius: 0.5rem; outline: none; font-size: 1rem; box-sizing: border-box;">
+                    <p th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" style="color: #ef4444; font-size: 0.85rem; margin: 0.35rem 0 0 0; font-weight: 500;"></p>
+                    <p style="color: #64748b; font-size: 0.85rem; margin: 0.35rem 0 0 0;">Stock disponible: <span th:text="${product.stock}"></span> unidades.</p>
+                </div>
+
+                <!-- Notes -->
+                <div>
+                    <label for="notes" style="display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; color: #475569;">Observaciones / Notas Adicionales (Opcional)</label>
+                    <textarea id="notes" th:field="*{notes}" rows="3" placeholder="Ej. Por favor entregar en empaque sellado, lo recogeré en la tarde." style="width: 100%; border: 1px solid #cbd5e1; padding: 0.75rem; border-radius: 0.5rem; outline: none; font-size: 1rem; font-family: inherit; box-sizing: border-box; resize: vertical;"></textarea>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
+                        <i class="fa-solid fa-check"></i> Confirmar y Apartar Producto
+                    </button>
+                    <a href="/catalogo" class="btn btn-outline" style="width: 100%; margin-top: 0.75rem; box-sizing: border-box; text-align: center;">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - Nova Droguería'"></title>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #ccfbf1;
+            --secondary: #0284c7;
+            --secondary-dark: #0369a1;
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --transition: all 0.2s ease-in-out;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5, h6, .brand-font {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Common Layout UI Elements */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            box-sizing: border-box;
+        }
+
+        /* Header Styles */
+        .navbar {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .navbar-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 4.5rem;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .navbar-brand i {
+            font-size: 1.8rem;
+        }
+
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+        }
+
+        /* Button Styling */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-light);
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        /* Mobile Nav Toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: #0f172a;
+            color: #94a3b8;
+            padding: 3rem 0;
+            margin-top: auto;
+            border-top: 1px solid #1e293b;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-brand i {
+            color: var(--primary);
+        }
+
+        .footer-title {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+            font-weight: 600;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #1e293b;
+            padding-top: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Breakpoints & Accessibility */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+                padding: 0.75rem;
+                font-size: 1.75rem;
+                z-index: 110;
+                min-width: 44px;
+                min-height: 44px;
+            }
+
+            .navbar-container {
+                height: 4.5rem;
+                padding: 0 1.25rem;
+            }
+
+            .navbar-brand {
+                font-size: 1.3rem;
+                max-width: 70%;
+            }
+
+            .navbar-brand i {
+                font-size: 1.6rem;
+            }
+
+            .navbar-nav {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 4.5rem;
+                left: 0;
+                right: 0;
+                background-color: var(--card-bg);
+                padding: 1.5rem;
+                border-bottom: 1px solid var(--border-color);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                gap: 1.25rem;
+                z-index: 1050;
+            }
+
+            .navbar-nav.mobile-active {
+                display: flex !important;
+            }
+            
+            .navbar-nav li {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .navbar-nav li a {
+                display: block;
+                padding: 0.75rem 0;
+                width: 100%;
+                font-size: 1.1rem;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+                text-align: center;
+            }
+            
+            .footer-brand {
+                justify-content: center;
+            }
+            
+            .footer-links {
+                align-items: center;
+            }
+        }
+        
+        /* General content scaling for smaller phones */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 1rem;
+            }
+            h1 {
+                font-size: 2rem !important;
+            }
+            h2 {
+                font-size: 1.6rem !important;
+            }
+            .navbar-brand span {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Search Autocomplete Styles */
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            display: block;
+            width: 100%;
+        }
+
+        .search-input-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon-inside {
+            position: absolute;
+            left: 1.25rem;
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .search-input-container input:focus ~ .search-icon-inside {
+            color: var(--primary);
+        }
+
+        .search-clear-btn {
+            position: absolute;
+            right: 1.25rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.15rem;
+            padding: 0.35rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            border-radius: 50%;
+        }
+
+        .search-clear-btn:hover {
+            color: #ef4444;
+            background-color: #f1f5f9;
+        }
+
+        .search-spinner {
+            position: absolute;
+            right: 2.75rem;
+            width: 1.2rem;
+            height: 1.2rem;
+            border: 2px solid rgba(13, 148, 136, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .search-dropdown {
+            position: absolute;
+            top: calc(100% + 0.65rem);
+            left: 0;
+            right: 0;
+            background-color: var(--card-bg);
+            border: 1px solid rgba(13, 148, 136, 0.15);
+            border-radius: 1.25rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -6px rgba(0, 0, 0, 0.04);
+            z-index: 1100;
+            overflow-y: auto;
+            max-height: 480px;
+            display: none;
+            text-align: left;
+            animation: fadeInSlide 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeInSlide {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .search-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            transition: var(--transition);
+            cursor: pointer;
+            outline: none;
+            position: relative;
+        }
+
+        .search-dropdown-item::after {
+            content: "→";
+            position: absolute;
+            right: 1.5rem;
+            opacity: 0;
+            transform: translateX(-5px);
+            transition: var(--transition);
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .search-dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-dropdown-item:hover, .search-dropdown-item:focus, .search-dropdown-item.keyboard-selected {
+            background-color: #f0fdfa;
+            padding-left: 1.75rem;
+        }
+
+        .search-dropdown-item:hover::after, .search-dropdown-item:focus::after, .search-dropdown-item.keyboard-selected::after {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .search-dropdown-item.keyboard-selected {
+            border-left: 4px solid var(--primary);
+        }
+
+        .search-dropdown-img {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.5rem;
+            object-fit: cover;
+            background-color: #f1f5f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
+        }
+
+        .search-dropdown-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .search-dropdown-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-dark);
+            margin: 0 0 0.25rem 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .search-dropdown-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .search-dropdown-status {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .status-available {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-low-stock {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-out {
+            background-color: #ffe4e6;
+            color: #991b1b;
+        }
+
+        .search-dropdown-footer {
+            background-color: #f8fafc;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--primary);
+            border-top: 1px solid var(--border-color);
+            transition: var(--transition);
+            display: block;
+        }
+
+        .search-dropdown-footer:hover, .search-dropdown-footer:focus, .search-dropdown-footer.keyboard-selected {
+            background-color: #f0fdfa;
+            color: var(--primary-dark);
+        }
+
+        .search-dropdown-empty {
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .search-dropdown-empty i {
+            font-size: 2.5rem;
+            color: #cbd5e1;
+            margin-bottom: 0.75rem;
+        }
+
+        @media (max-width: 576px) {
+            .search-dropdown {
+                max-height: 380px;
+                border-radius: 1rem;
+            }
+
+            .search-dropdown-item {
+                padding: 0.85rem 1rem;
+            }
+
+            .search-dropdown-item::after {
+                right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header fragment -->
+    <header th:fragment="header(activeTab)" class="navbar">
+        <div class="container navbar-container">
+            <a href="/" class="navbar-brand">
+                <i class="fa-solid fa-house-medical"></i>
+                <span>NOVA DROGUERÍA</span>
+            </a>
+
+            <button class="menu-toggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <ul class="navbar-nav" id="navbar-nav">
+                <li><a href="/" class="nav-link" th:classappend="${activeTab == 'home' ? 'active' : ''}">Inicio</a></li>
+                <li><a href="/catalogo" class="nav-link" th:classappend="${activeTab == 'catalog' ? 'active' : ''}">Catálogo</a></li>
+                <li><a href="/apartados/buscar" class="nav-link" th:classappend="${activeTab == 'search' ? 'active' : ''}">Consultar Apartado</a></li>
+                
+                <li sec:authorize="isAuthenticated()">
+                    <a href="/admin/dashboard" class="btn btn-outline btn-sm">
+                        <i class="fa-solid fa-gauge"></i> Panel Admin
+                    </a>
+                </li>
+                <li sec:authorize="!isAuthenticated()">
+                    <a href="/login" class="nav-link">
+                        <i class="fa-solid fa-user-lock"></i> Acceso Admin
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <script>
+            function toggleMobileMenu() {
+                var x = document.getElementById("navbar-nav");
+                x.classList.toggle("mobile-active");
+            }
+        </script>
+    </header>
+
+    <!-- Footer fragment -->
+    <footer th:fragment="footer" class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-brand">
+                        <i class="fa-solid fa-house-medical"></i>
+                        <span>NOVA DROGUERÍA</span>
+                    </div>
+                    <p>Tu farmacia digital premium y confiable de la comunidad. Aparta tus medicamentos en línea y recógelos de manera ágil sin esperas.</p>
+                </div>
+                <div>
+                    <h3 class="footer-title">Enlaces</h3>
+                    <ul class="footer-links">
+                        <li><a href="/">Inicio</a></li>
+                        <li><a href="/catalogo">Catálogo de Productos</a></li>
+                        <li><a href="/apartados/buscar">Consultar Apartado</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="footer-title">Contacto</h3>
+                    <ul class="footer-links" th:if="${config != null}">
+                        <li><i class="fa-solid fa-phone"></i> <span th:text="${config.phone}"></span></li>
+                        <li><i class="fa-solid fa-location-dot"></i> <span th:text="${config.address}"></span></li>
+                        <li><i class="fa-solid fa-clock"></i> <span th:text="${config.schedule}"></span></li>
+                    </ul>
+                    <ul class="footer-links" th:if="${config == null}">
+                        <li><i class="fa-solid fa-phone"></i> +57 300 572 2844</li>
+                        <li><i class="fa-solid fa-location-dot"></i> Calle 10 # 5-20, Centro Histórico</li>
+                        <li><i class="fa-solid fa-clock"></i> Lunes a Sábado: 8:00 AM - 9:00 PM</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Nova Droguería. Todos los derechos reservados. Información presentada es meramente ilustrativa.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Static Frontend Logic Files defer-loaded to prevent blocking -->
+    <script src="/js/mobile-nav.js" defer></script>
+    <script src="/js/autocomplete.js" defer></script>
+</body>
+</html>

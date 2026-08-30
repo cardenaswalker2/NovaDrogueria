@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Tus Apartados')}">
+</head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header('search')}"></header>
+
+    <div class="container" style="padding-top: 5rem; padding-bottom: 7rem; max-width: 600px; padding-left: 1rem; padding-right: 1rem;">
+        
+        <!-- Back navigation link -->
+        <div style="margin-bottom: 2rem;">
+            <a href="/apartados/buscar" style="color: var(--primary); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: var(--transition);">
+                <i class="fa-solid fa-arrow-left"></i> Realizar Nueva Consulta
+            </a>
+        </div>
+
+        <!-- Headline header -->
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <div style="width: 4.5rem; height: 4.5rem; background-color: #f0fdfa; border: 1px solid #99f6e4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; font-size: 2rem; color: #0d9488;">
+                <i class="fa-solid fa-clipboard-list"></i>
+            </div>
+            <h1 style="font-size: 2rem; font-weight: 800; color: #0f172a; margin: 0 0 0.5rem 0;">Tus Apartados</h1>
+            <p style="color: #64748b; font-size: 1rem; margin: 0;">
+                Encontramos <strong style="color: #0f172a;" th:text="${#lists.size(reservations)}"></strong> apartados asociados a tu número de celular.
+            </p>
+        </div>
+
+        <!-- Cards List -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 3rem;">
+            <div th:each="res : ${reservations}" style="background-color: white; border: 1px solid #e2e8f0; border-radius: 1.25rem; padding: 1.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 1rem; position: relative;">
+                
+                <!-- Card Header -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+                    <span th:text="${res.code}" style="font-family: monospace; font-size: 1.2rem; font-weight: 700; color: #0f172a;"></span>
+                    <span class="badge" style="padding: 0.3rem 0.6rem; border-radius: 9999px; font-weight: 700; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem;"
+                          th:styleappend="${
+                            res.status.name() == 'PENDIENTE' ? 'background-color: #fef3c7; color: #d97706;' :
+                            res.status.name() == 'CONFIRMADO' ? 'background-color: #e0f2fe; color: #0284c7;' :
+                            res.status.name() == 'PREPARADO' ? 'background-color: #f3e8ff; color: #8b5cf6;' :
+                            res.status.name() == 'ENTREGADO' ? 'background-color: #d1fae5; color: #059669;' :
+                            'background-color: #ffe4e6; color: #dc2626;'
+                          }">
+                        <span th:text="${res.status.emoji}"></span>
+                        <span th:text="${res.status.displayName}"></span>
+                    </span>
+                </div>
+
+                <!-- Products list in card -->
+                <div>
+                    <div th:each="item : ${res.items}" style="font-size: 0.95rem; color: #475569; display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                        <span>
+                            <strong th:text="${item.productNameSnapshot}" style="color: #0f172a;"></strong> 
+                            <span style="color: #64748b; font-size: 0.85rem;" th:text="' × ' + ${item.quantity}"></span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Card Footer Info -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 0.75rem; font-size: 0.9rem;">
+                    <div>
+                        <span style="color: #64748b; display: block; font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Total a pagar:</span>
+                        <strong th:text="'$' + ${res.total}" style="color: #0d9488; font-size: 1.15rem; font-weight: 800;"></strong>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="color: #64748b; display: block; font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Fecha:</span>
+                        <span th:text="${#temporals.format(res.createdAt, 'dd MMM yyyy')}" style="color: #0f172a; font-weight: 600;"></span>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div style="margin-top: 0.5rem;">
+                    <form th:action="@{/apartados/buscar}" method="post" style="width: 100%;">
+                        <input type="hidden" name="searchType" value="code">
+                        <input type="hidden" name="code" th:value="${res.code}">
+                        <!-- Use phone value matching normalization -->
+                        <input type="hidden" name="phone" th:value="${res.customerPhone}">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.95rem; font-weight: 700; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-eye"></i> Ver detalle completo
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Communication Tools -->
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <a href="https://wa.me/573005722844?text=Hola,%20quiero%20consultar%20sobre%20mis%20apartados." target="_blank" class="btn" style="background-color: #25d366; color: white; display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 1rem; border-radius: 0.5rem; font-weight: 600; text-align: center;">
+                <i class="fa-brands fa-whatsapp"></i> Consultar mis apartados por WhatsApp
+            </a>
+            <a href="/catalogo" class="btn btn-outline" style="border: 1px solid var(--primary); color: var(--primary); text-align: center; text-decoration: none; padding: 1rem; border-radius: 0.5rem; font-weight: 600; display: block;">
+                <i class="fa-solid fa-cart-shopping"></i> Ir al Catálogo de Productos
+            </a>
+        </div>
+
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

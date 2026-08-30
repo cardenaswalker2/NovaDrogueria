@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin-layout :: head('Configuración de la Droguería')}">
+</head>
+<body>
+
+    <aside th:replace="~{fragments/admin-layout :: sidebar('config')}"></aside>
+
+    <main class="main-content">
+        <h1 style="font-size: 2.25rem; font-weight: 700; color: #0f172a; margin-bottom: 2rem;">Ajustes de la Droguería</h1>
+
+        <div th:if="${successMessage != null}" class="alert alert-success">
+            <i class="fa-solid fa-check"></i> <span th:text="${successMessage}"></span>
+        </div>
+
+        <div class="card" style="max-width: 750px;">
+            <form th:action="@{/admin/configuracion}" th:object="${appConfig}" method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <input type="hidden" th:field="*{id}">
+
+                <!-- Store Name -->
+                <div class="form-group">
+                    <label for="storeName" class="form-label">Nombre de la Droguería / Negocio *</label>
+                    <input type="text" id="storeName" th:field="*{storeName}" class="form-control" placeholder="Nova Droguería" required>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="description" class="form-label">Descripción General / Eslogan</label>
+                    <textarea id="description" th:field="*{description}" rows="3" class="form-control" placeholder="Descripción de cara al público..."></textarea>
+                </div>
+
+                <!-- Welcome Msg -->
+                <div class="form-group">
+                    <label for="welcomeMessage" class="form-label">Mensaje de Bienvenida</label>
+                    <input type="text" id="welcomeMessage" th:field="*{welcomeMessage}" class="form-control" placeholder="Mensaje prellenado...">
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                    
+                    <!-- Address -->
+                    <div class="form-group">
+                        <label for="address" class="form-label">Dirección Física *</label>
+                        <input type="text" id="address" th:field="*{address}" class="form-control" placeholder="Calle 10 # 5-20" required>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="form-group">
+                        <label for="phone" class="form-label">Teléfono Público *</label>
+                        <input type="text" id="phone" th:field="*{phone}" class="form-control" placeholder="+57 300 123 4567" required>
+                    </div>
+
+                    <!-- WhatsApp Number -->
+                    <div class="form-group">
+                        <label for="whatsappNumber" class="form-label">Número WhatsApp (Sólo números, con indicativo de país) *</label>
+                        <input type="text" id="whatsappNumber" th:field="*{whatsappNumber}" class="form-control" placeholder="573001234567" required>
+                        <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0.35rem 0 0 0;">Utilizado para prellenar mensajes de consultas de clientes.</p>
+                    </div>
+
+                    <!-- Schedule -->
+                    <div class="form-group">
+                        <label for="schedule" class="form-label">Horario de Atención *</label>
+                        <input type="text" id="schedule" th:field="*{schedule}" class="form-control" placeholder="Lunes a Sábado: 8:00 AM - 9:00 PM" required>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+</body>
+</html>

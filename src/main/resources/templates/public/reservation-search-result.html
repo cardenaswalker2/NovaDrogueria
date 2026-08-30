@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Detalle de tu Apartado')}">
+</head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header('search')}"></header>
+
+    <div class="container" style="padding-top: 5rem; padding-bottom: 7rem; max-width: 600px; padding-left: 1rem; padding-right: 1rem;">
+        
+        <!-- Back navigation link -->
+        <div style="margin-bottom: 2rem;">
+            <a href="/apartados/buscar" style="color: var(--primary); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: var(--transition);">
+                <i class="fa-solid fa-arrow-left"></i> Realizar Nueva Consulta
+            </a>
+        </div>
+
+        <h1 style="font-size: 2rem; font-weight: 800; color: #0f172a; margin-bottom: 2rem; text-align: center;">Detalle de tu Apartado</h1>
+
+        <!-- Ticket Card -->
+        <div style="background-color: white; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 2rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); margin-bottom: 2.5rem;">
+            
+            <div style="border-bottom: 2px dashed #e2e8f0; padding-bottom: 1.5rem; margin-bottom: 1.5rem; text-align: center; position: relative;">
+                <span style="font-size: 0.8rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.05em; display: block; margin-bottom: 0.5rem;">Código de Apartado</span>
+                <div style="display: inline-flex; align-items: center; gap: 0.5rem; background-color: #f1f5f9; padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid #cbd5e1;">
+                    <span th:text="${reservation.code}" style="font-family: monospace; font-size: 1.75rem; font-weight: 700; color: #0f172a;"></span>
+                    <button id="btn-copy-code-detail" th:data-code="${reservation.code}" style="background: none; border: none; color: #64748b; cursor: pointer; padding: 0.25rem; font-size: 1.1rem; display: flex; align-items: center;" aria-label="Copiar código">
+                        <i class="fa-solid fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Details list -->
+            <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.95rem; color: #0f172a;">
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; background-color: #f8fafc; padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid #e2e8f0;">
+                    <span style="font-weight: 600; color: #475569;">Estado Actual:</span>
+                    <span class="badge" style="padding: 0.4rem 0.8rem; border-radius: 9999px; font-weight: 700; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.25rem;"
+                          th:styleappend="${
+                            reservation.status.name() == 'PENDIENTE' ? 'background-color: #fef3c7; color: #d97706;' :
+                            reservation.status.name() == 'CONFIRMADO' ? 'background-color: #e0f2fe; color: #0284c7;' :
+                            reservation.status.name() == 'PREPARADO' ? 'background-color: #f3e8ff; color: #8b5cf6;' :
+                            reservation.status.name() == 'ENTREGADO' ? 'background-color: #d1fae5; color: #059669;' :
+                            'background-color: #ffe4e6; color: #dc2626;'
+                          }">
+                        <span th:text="${reservation.status.emoji}"></span>
+                        <span th:text="${reservation.status.displayName}"></span>
+                    </span>
+                </div>
+
+                <!-- Products cards container -->
+                <div style="margin-top: 0.5rem;">
+                    <span style="font-weight: 600; color: #475569; display: block; margin-bottom: 0.75rem;">Productos Reservados:</span>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <div th:each="item : ${reservation.items}" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span th:text="${item.productNameSnapshot}" style="font-weight: 700; color: #0f172a; display: block;"></span>
+                                <span style="font-size: 0.8rem; color: #64748b;">
+                                    Cantidad: <strong style="color: #0f172a;" th:text="${item.quantity}"></strong> × <span th:text="'$' + ${item.unitPriceSnapshot}"></span> c/u
+                                </span>
+                            </div>
+                            <span th:text="'$' + ${item.lineTotal}" style="font-weight: 700; color: var(--primary);"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; border-top: 1px solid #f1f5f9; padding-top: 0.75rem;">
+                    <span style="font-weight: 600; color: #475569;">Cliente:</span>
+                    <span th:text="${reservation.customerName}" style="font-weight: 600;"></span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; border-top: 1px solid #f1f5f9; padding-top: 0.75rem;">
+                    <span style="font-weight: 600; color: #475569;">Fecha de Apartado:</span>
+                    <span th:text="${#temporals.format(reservation.createdAt, 'dd/MM/yyyy hh:mm a')}" style="font-weight: 600;"></span>
+                </div>
+
+                <div th:if="${reservation.notes != null && !reservation.notes.isEmpty()}" style="display: flex; flex-direction: column; gap: 0.25rem; border-top: 1px solid #f1f5f9; padding-top: 0.75rem;">
+                    <span style="font-weight: 600; color: #475569;">Observaciones del apartado:</span>
+                    <p th:text="${reservation.notes}" style="margin: 0; color: #475569; font-style: italic; font-size: 0.9rem; line-height: 1.4;"></p>
+                </div>
+
+                <!-- Grand Total pay local cash -->
+                <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 800; border-top: 1px solid #cbd5e1; padding-top: 1.25rem; margin-top: 0.5rem; background-color: #f0fdfa; padding: 1rem; border-radius: 0.75rem; border: 1px solid #99f6e4; box-sizing: border-box;">
+                    <span style="color: #0f766e;">Total a Pagar en Local:</span>
+                    <span th:text="'$' + ${reservation.total}" style="color: #0d9488;"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Timeline Process flow -->
+        <h3 style="font-size: 1.2rem; font-weight: 700; color: #0f172a; margin: 0 0 1.5rem 0; padding-left: 0.5rem;"><i class="fa-solid fa-route"></i> Estado del proceso</h3>
+        <div style="background-color: white; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 2rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); margin-bottom: 2.5rem;">
+            
+            <!-- Cancelled Special state display -->
+            <div th:if="${reservation.status.name() == 'CANCELADO'}" style="display: flex; gap: 1rem; align-items: start;">
+                <div style="background-color: #ffe4e6; color: #ef4444; width: 2.5rem; height: 2.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </div>
+                <div>
+                    <h4 style="margin: 0 0 0.25rem 0; font-size: 1.05rem; font-weight: 700; color: #991b1b;">Apartado Cancelado</h4>
+                    <p style="margin: 0; font-size: 0.85rem; color: #b91c1c; line-height: 1.4;">
+                        Este apartado ha sido cancelado y los productos han sido reintegrados al inventario de la farmacia.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Standard Stepper progress timeline -->
+            <div th:unless="${reservation.status.name() == 'CANCELADO'}" style="display: flex; flex-direction: column; gap: 1.5rem; position: relative; padding-left: 1.5rem;">
+                <!-- Timeline vertical line -->
+                <div style="position: absolute; left: 5px; top: 5px; bottom: 5px; width: 2px; background-color: #e2e8f0;"></div>
+
+                <!-- Node: PENDIENTE -->
+                <div style="position: relative;">
+                    <!-- Circle status -->
+                    <div style="position: absolute; left: -21px; top: 4px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid white; z-index: 10;"
+                         th:styleappend="${
+                            reservation.status.name() == 'PENDIENTE' ? 'background-color: #d97706; box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.2);' : 'background-color: #059669;'
+                         }"></div>
+                    <div>
+                        <strong style="font-size: 0.95rem;" th:style="${reservation.status.name() == 'PENDIENTE' ? 'color:#d97706;' : 'color:#0f172a;'}">Pendiente de Confirmación</strong>
+                        <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: #64748b; line-height: 1.4;">
+                            Estamos confirmando la disponibilidad física de tu producto en nuestro estante.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Node: CONFIRMADO / PREPARADO -->
+                <div style="position: relative;">
+                    <div style="position: absolute; left: -21px; top: 4px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid white; z-index: 10;"
+                         th:styleappend="${
+                            reservation.status.name() == 'CONFIRMADO' ? 'background-color: #0284c7; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);' : 
+                            (reservation.status.name() == 'PREPARADO' || reservation.status.name() == 'ENTREGADO' ? 'background-color: #059669;' : 'background-color: #cbd5e1;')
+                         }"></div>
+                    <div>
+                        <strong style="font-size: 0.95rem;" th:style="${reservation.status.name() == 'CONFIRMADO' ? 'color:#0284c7;' : (reservation.status.name() == 'PREPARADO' || reservation.status.name() == 'ENTREGADO' ? 'color:#0f172a;' : 'color:#94a3b8;')}">Apartado Confirmado</strong>
+                        <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: #64748b; line-height: 1.4;">
+                            El producto ha sido apartado y separado con éxito de nuestro stock.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Node: PREPARADO -->
+                <div style="position: relative;">
+                    <div style="position: absolute; left: -21px; top: 4px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid white; z-index: 10;"
+                         th:styleappend="${
+                            reservation.status.name() == 'PREPARADO' ? 'background-color: #8b5cf6; box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);' : 
+                            (reservation.status.name() == 'ENTREGADO' ? 'background-color: #059669;' : 'background-color: #cbd5e1;')
+                         }"></div>
+                    <div>
+                        <strong style="font-size: 0.95rem;" th:style="${reservation.status.name() == 'PREPARADO' ? 'color:#8b5cf6;' : (reservation.status.name() == 'ENTREGADO' ? 'color:#0f172a;' : 'color:#94a3b8;')}">Listo para Recoger</strong>
+                        <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: #64748b; line-height: 1.4;">
+                            ¡Listo en mostrador! Puedes acercarte a la droguería física y reclamar tu apartado con el código.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Node: ENTREGADO -->
+                <div style="position: relative;">
+                    <div style="position: absolute; left: -21px; top: 4px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid white; z-index: 10;"
+                         th:styleappend="${
+                            reservation.status.name() == 'ENTREGADO' ? 'background-color: #059669; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);' : 'background-color: #cbd5e1;'
+                         }"></div>
+                    <div>
+                        <strong style="font-size: 0.95rem;" th:style="${reservation.status.name() == 'ENTREGADO' ? 'color:#059669;' : 'color:#94a3b8;'}">Entregado</strong>
+                        <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: #64748b; line-height: 1.4;">
+                            El apartado ha sido entregado de forma satisfactoria en la farmacia.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Communication Tools -->
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem;">
+            <a th:href="'https://wa.me/573005722844?text=' + ${#uris.escapePathSegment('Hola, quiero consultar sobre mi apartado ' + reservation.code)}" target="_blank" class="btn" style="background-color: #25d366; color: white; display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 1rem; border-radius: 0.5rem; font-weight: 600;">
+                <i class="fa-brands fa-whatsapp"></i> Contactar a Nova Droguería
+            </a>
+            <a href="/catalogo" class="btn btn-outline" style="border: 1px solid var(--primary); color: var(--primary); text-align: center; text-decoration: none; padding: 1rem; border-radius: 0.5rem; font-weight: 600; display: block;">
+                <i class="fa-solid fa-cart-shopping"></i> Continuar Explorando Catálogo
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Clipboard copy feedback helper toast container -->
+    <div id="toast-container" style="position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 2000; display: flex; flex-direction: column; gap: 0.5rem;"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const btnCopy = document.getElementById("btn-copy-code-detail");
+            if (btnCopy) {
+                btnCopy.addEventListener("click", () => {
+                    const code = btnCopy.getAttribute("data-code");
+                    navigator.clipboard.writeText(code).then(() => {
+                        showLocalToast("✓ Código copiado");
+                    });
+                });
+            }
+
+            function showLocalToast(message) {
+                const container = document.getElementById("toast-container");
+                if (!container) return;
+                const toast = document.createElement("div");
+                toast.style.backgroundColor = "#0f172a";
+                toast.style.color = "white";
+                toast.style.padding = "0.75rem 1.5rem";
+                toast.style.borderRadius = "0.5rem";
+                toast.style.fontWeight = "600";
+                toast.style.fontSize = "0.9rem";
+                toast.style.boxShadow = "0 10px 15px -3px rgba(0, 0, 0, 0.1)";
+                toast.style.opacity = "1";
+                toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${message}`;
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = "0";
+                    toast.style.transition = "opacity 0.3s ease";
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        });
+    </script>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

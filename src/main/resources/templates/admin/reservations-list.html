@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin-layout :: head('Gestión de Apartados')}">
+</head>
+<body>
+
+    <aside th:replace="~{fragments/admin-layout :: sidebar('reservations')}"></aside>
+
+    <main class="main-content">
+        
+        <!-- Header area -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+            <h1 style="font-size: 2.25rem; font-weight: 700; color: #0f172a; margin: 0;">Gestión de Apartados</h1>
+            <button onclick="window.print()" class="btn btn-outline" style="border-color: #475569; color: #475569;">
+                <i class="fa-solid fa-print"></i> Imprimir Reporte
+            </button>
+        </div>
+
+        <!-- Alert notifications -->
+        <div th:if="${successMessage != null}" class="alert alert-success">
+            <i class="fa-solid fa-check"></i> <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage != null}" class="alert alert-error">
+            <i class="fa-solid fa-circle-exclamation"></i> <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Callout Alert for Pending attention reservations -->
+        <div th:if="${countPending > 0}" style="background-color: #fffbeb; border: 1px solid #fde68a; border-left: 5px solid #d97706; padding: 1.25rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; color: #92400e;">
+                <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.25rem;"></i>
+                <span>⚠️ Hay <strong><span th:text="${countPending}"></span></strong> apartados pendientes esperando confirmación. Revisa estos apartados para evitar tiempos de espera.</span>
+            </div>
+            <a href="/admin/apartados?status=PENDIENTE" class="btn btn-primary btn-sm" style="background-color: #d97706;">Ver pendientes</a>
+        </div>
+
+        <!-- KPI statistics cards grid (Real data from DB) -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background-color: #fef3c7; color: #d97706;">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+                <div>
+                    <span style="display: block; color: var(--text-muted); font-size: 0.8rem; font-weight: 500;">Pendientes</span>
+                    <strong th:text="${countPending}" style="font-size: 1.5rem; color: #0f172a; font-weight: 700;"></strong>
+                    <span style="display: block; color: #d97706; font-size: 0.7rem;">Requiere atención</span>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background-color: #e0f2fe; color: #0284c7;">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <div>
+                    <span style="display: block; color: var(--text-muted); font-size: 0.8rem; font-weight: 500;">Confirmados</span>
+                    <strong th:text="${countConfirmed}" style="font-size: 1.5rem; color: #0f172a; font-weight: 700;"></strong>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background-color: #f3e8ff; color: #8b5cf6;">
+                    <i class="fa-solid fa-box"></i>
+                </div>
+                <div>
+                    <span style="display: block; color: var(--text-muted); font-size: 0.8rem; font-weight: 500;">Listos para Recoger</span>
+                    <strong th:text="${countPrepared}" style="font-size: 1.5rem; color: #0f172a; font-weight: 700;"></strong>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background-color: #d1fae5; color: #059669;">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div>
+                    <span style="display: block; color: var(--text-muted); font-size: 0.8rem; font-weight: 500;">Entregados Hoy</span>
+                    <strong th:text="${countDeliveredToday}" style="font-size: 1.5rem; color: #0f172a; font-weight: 700;"></strong>
+                </div>
+            </div>
+
+            <div class="kpi-card" style="display: none;">
+                <div class="kpi-icon" style="background-color: #ffe4e6; color: #f43f5e;">
+                    <i class="fa-solid fa-ban"></i>
+                </div>
+                <div>
+                    <span style="display: block; color: var(--text-muted); font-size: 0.8rem; font-weight: 500;">Cancelados</span>
+                    <strong th:text="${countCancelled}" style="font-size: 1.5rem; color: #0f172a; font-weight: 700;"></strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter panel tools -->
+        <div class="filter-panel">
+            <form id="admin-filter-form" action="/admin/apartados" method="get" style="display: flex; flex-wrap: wrap; gap: 1rem; width: 100%;">
+                
+                <!-- Search -->
+                <div style="flex: 1; min-width: 250px; display: flex; gap: 0.5rem;">
+                    <input type="text" id="admin-search-input" name="search" th:value="${search}" class="form-control" placeholder="Buscar por código, cliente, teléfono..." style="padding: 0.5rem 0.75rem; font-size: 0.9rem;">
+                    <button type="button" id="admin-search-btn" class="btn btn-primary" style="padding: 0.5rem 1rem;"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+
+                <!-- Status Filter -->
+                <div class="filter-group">
+                    <label for="filter-status" style="font-size: 0.85rem; font-weight: 500; color: var(--text-muted);">Estado:</label>
+                    <select id="filter-status" name="status" class="form-control" style="padding: 0.4rem; font-size: 0.85rem; width: auto; min-width: 140px;">
+                        <option value="">Todos</option>
+                        <option th:each="st : ${statuses}" th:value="${st}" th:text="${st.displayName}" th:selected="${selectedStatus == st}"></option>
+                    </select>
+                </div>
+
+                <!-- Date Filter -->
+                <div class="filter-group">
+                    <label for="filter-date" style="font-size: 0.85rem; font-weight: 500; color: var(--text-muted);">Fecha:</label>
+                    <select id="filter-date" name="dateFilter" class="form-control" style="padding: 0.4rem; font-size: 0.85rem; width: auto; min-width: 120px;">
+                        <option value="" th:selected="${dateFilter == null || dateFilter == ''}">Todos</option>
+                        <option value="today" th:selected="${dateFilter == 'today'}">Hoy</option>
+                        <option value="yesterday" th:selected="${dateFilter == 'yesterday'}">Ayer</option>
+                        <option value="week" th:selected="${dateFilter == 'week'}">Últimos 7 días</option>
+                        <option value="month" th:selected="${dateFilter == 'month'}">Últimos 30 días</option>
+                    </select>
+                </div>
+
+                <!-- Sort Filter -->
+                <div class="filter-group">
+                    <label for="filter-sort" style="font-size: 0.85rem; font-weight: 500; color: var(--text-muted);">Ordenar por:</label>
+                    <select id="filter-sort" name="sort" class="form-control" style="padding: 0.4rem; font-size: 0.85rem; width: auto; min-width: 140px;">
+                        <option value="recent" th:selected="${selectedSort == 'recent'}">Más recientes primero</option>
+                        <option value="oldest" th:selected="${selectedSort == 'oldest'}">Más antiguos primero</option>
+                        <option value="highestTotal" th:selected="${selectedSort == 'highestTotal'}">Mayor total</option>
+                        <option value="lowestTotal" th:selected="${selectedSort == 'lowestTotal'}">Menor total</option>
+                    </select>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Reservations datagrid card -->
+        <div class="card" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Cliente</th>
+                            <th>Contacto</th>
+                            <th>Productos</th>
+                            <th>Total</th>
+                            <th>Estado Actual</th>
+                            <th>Fecha</th>
+                            <th>Acciones rápidas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="res : ${reservationPage.content}" class="interactive-row" 
+                            th:data-reservation-json="${res.jsonData}"
+                            onclick="openReservationDrawer(this.getAttribute('data-reservation-json'))">
+                            <td th:text="${res.code}" style="font-family: monospace; font-weight: 700; color: #0f172a;"></td>
+                            <td th:text="${res.customerName}"></td>
+                            <td>
+                                <span th:text="${res.customerPhone}" style="display: block; font-weight: 600;"></span>
+                                <span th:text="${res.customerEmail}" style="font-size: 0.8rem; color: var(--text-muted);"></span>
+                            </td>
+                            <td>
+                                <div th:each="item : ${res.items}" style="font-size: 0.9rem;">
+                                    <span th:text="${item.productNameSnapshot}" style="font-weight: 500;"></span>
+                                    <span th:text="'x' + ${item.quantity}" style="color: var(--text-muted);"></span>
+                                </div>
+                            </td>
+                            <td th:text="${currencyFormatter.format(res.total)}" style="font-weight: 700; color: #0d9488;"></td>
+                            <td>
+                                <span class="badge" th:styleappend="${
+                                    res.status.name() == 'PENDIENTE' ? 'background-color: #fef3c7; color: #d97706;' :
+                                    res.status.name() == 'CONFIRMADO' ? 'background-color: #e0f2fe; color: #0284c7;' :
+                                    res.status.name() == 'PREPARADO' ? 'background-color: #f3e8ff; color: #8b5cf6;' :
+                                    res.status.name() == 'ENTREGADO' ? 'background-color: #d1fae5; color: #059669;' :
+                                    'background-color: #ffe4e6; color: #dc2626;'
+                                }">
+                                    <span th:text="${res.status.emoji}"></span>
+                                    <span th:text="${res.status.displayName}"></span>
+                                </span>
+                            </td>
+                            <td th:text="${#temporals.format(res.createdAt, 'dd/MM/yyyy')}"></td>
+                            <td onclick="event.stopPropagation()">
+                                <div style="display: flex; gap: 0.35rem;">
+                                    
+                                    <button class="btn btn-outline btn-sm" style="border-color: #0284c7; color: #0284c7;" 
+                                            th:data-json-payload="${res.jsonData}"
+                                            onclick="openReservationDrawer(this.getAttribute('data-json-payload'))">
+                                        <i class="fa-solid fa-eye"></i> Ver
+                                    </button>
+
+                                    <!-- Quick state triggers -->
+                                    <form th:if="${res.status.name() == 'PENDIENTE'}" th:action="@{'/admin/apartados/estado/' + ${res.id}}" method="post" style="display:inline;">
+                                        <input type="hidden" name="status" value="CONFIRMADO">
+                                        <button type="submit" class="btn btn-outline btn-sm" style="border-color: #0284c7; color: #0284c7;"><i class="fa-solid fa-check"></i> Confirmar</button>
+                                    </form>
+
+                                    <form th:if="${res.status.name() == 'CONFIRMADO'}" th:action="@{'/admin/apartados/estado/' + ${res.id}}" method="post" style="display:inline;">
+                                        <input type="hidden" name="status" value="PREPARADO">
+                                        <button type="submit" class="btn btn-outline btn-sm" style="border-color: #8b5cf6; color: #8b5cf6;"><i class="fa-solid fa-box"></i> Preparar</button>
+                                    </form>
+
+                                    <form th:if="${res.status.name() == 'PREPARADO'}" th:action="@{'/admin/apartados/estado/' + ${res.id}}" method="post" style="display:inline;">
+                                        <input type="hidden" name="status" value="ENTREGADO">
+                                        <button type="submit" class="btn btn-outline btn-sm" style="border-color: #059669; color: #059669;"><i class="fa-solid fa-circle-check"></i> Entregar</button>
+                                    </form>
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(reservationPage.content)}">
+                            <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 3rem 0;">No se encontraron apartados.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Card Layout list -->
+            <div class="mobile-cards-list">
+                <div th:each="res : ${reservationPage.content}" class="mobile-card" 
+                     th:data-res-json="${res.jsonData}"
+                     onclick="openReservationDrawer(this.getAttribute('data-res-json'))">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <span th:text="${res.code}" style="font-family: monospace; font-weight: 700; font-size: 1.1rem; color: #0f172a;"></span>
+                        <span class="badge" th:styleappend="${
+                            res.status.name() == 'PENDIENTE' ? 'background-color: #fef3c7; color: #d97706;' :
+                            res.status.name() == 'CONFIRMADO' ? 'background-color: #e0f2fe; color: #0284c7;' :
+                            res.status.name() == 'PREPARADO' ? 'background-color: #f3e8ff; color: #8b5cf6;' :
+                            res.status.name() == 'ENTREGADO' ? 'background-color: #d1fae5; color: #059669;' :
+                            'background-color: #ffe4e6; color: #dc2626;'
+                        }">
+                            <span th:text="${res.status.emoji}"></span>
+                            <span th:text="${res.status.displayName}"></span>
+                        </span>
+                    </div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <strong th:text="${res.customerName}" style="display: block; font-size: 0.95rem; color: #0f172a;"></strong>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);"><i class="fa-solid fa-phone"></i> <span th:text="${res.customerPhone}"></span></span>
+                    </div>
+                    <div style="margin-bottom: 0.75rem; border-top: 1px solid var(--border-color); padding-top: 0.5rem;">
+                        <div th:each="item : ${res.items}" style="font-size: 0.85rem; color: #475569;">
+                            <span th:text="${item.productNameSnapshot}"></span>
+                            <span th:text="'x' + ${item.quantity}" style="font-weight: 600;"></span>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+                        <strong th:text="${currencyFormatter.format(res.total)}" style="color: #0d9488; font-size: 1.1rem;"></strong>
+                        <span th:text="${#temporals.format(res.createdAt, 'dd MMM · hh:mm a')}" style="font-size: 0.8rem; color: var(--text-muted);"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination navigation panel -->
+        <div th:if="${reservationPage.totalPages > 1}" class="pagination" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+            <a th:if="${reservationPage.hasPrevious()}" th:href="@{/admin/apartados(search=${search}, status=${selectedStatus}, dateFilter=${dateFilter}, sort=${selectedSort}, page=${reservationPage.number - 1})}" class="btn btn-outline btn-sm">Anterior</a>
+            <span th:text="'Página ' + (${reservationPage.number} + 1) + ' de ' + ${reservationPage.totalPages}" style="display: inline-flex; align-items: center; padding: 0 1rem; font-weight: 500; color: #475569; font-size: 0.9rem;"></span>
+            <a th:if="${reservationPage.hasNext()}" th:href="@{/admin/apartados(search=${search}, status=${selectedStatus}, dateFilter=${dateFilter}, sort=${selectedSort}, page=${reservationPage.number + 1})}" class="btn btn-outline btn-sm">Siguiente</a>
+        </div>
+    </main>
+
+    <!-- Interactive Drawer Detail Panel Overlay -->
+    <div id="detail-drawer-overlay" class="drawer-overlay" onclick="closeReservationDrawer()">
+        <div class="drawer" onclick="event.stopPropagation()">
+            <div class="drawer-header">
+                <div>
+                    <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em; display: block;">Detalle de Apartado</span>
+                    <h2 id="drawer-code" style="margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--text-dark); font-family: monospace;"></h2>
+                </div>
+                <button onclick="closeReservationDrawer()" class="btn btn-outline" style="border: none; padding: 0.5rem; font-size: 1.25rem; color: var(--text-muted);"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="drawer-body">
+                <!-- Status Badge -->
+                <div style="margin-bottom: 1.5rem;">
+                    <span id="drawer-badge-status" class="badge" style="padding: 0.5rem 1rem; font-size: 0.9rem;"></span>
+                    <span id="drawer-created-at" style="font-size: 0.85rem; color: var(--text-muted); margin-left: 0.75rem;"></span>
+                </div>
+
+                <!-- Client Info Card -->
+                <div class="card" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+                    <h3 style="margin-top: 0; font-size: 1.05rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; color: var(--text-dark);"><i class="fa-solid fa-user"></i> Datos del Cliente</h3>
+                    <div style="display: grid; gap: 0.75rem; font-size: 0.9rem;">
+                        <div>
+                            <span style="color: var(--text-muted); display: block; font-size: 0.8rem;">Nombre Completo</span>
+                            <strong id="drawer-client-name" style="color: var(--text-dark);"></strong>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted); display: block; font-size: 0.8rem;">Teléfono</span>
+                            <strong id="drawer-client-phone" style="color: var(--text-dark);"></strong>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted); display: block; font-size: 0.8rem;">Correo Electrónico</span>
+                            <strong id="drawer-client-email" style="color: var(--text-dark);"></strong>
+                        </div>
+                    </div>
+                    <!-- Actions -->
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem; flex-wrap: wrap;">
+                        <a id="btn-drawer-whatsapp" target="_blank" class="btn btn-sm" style="background-color: #25d366; color: white; flex: 1;"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+                        <a id="btn-drawer-call" class="btn btn-sm btn-outline" style="border-color: #0284c7; color: #0284c7;"><i class="fa-solid fa-phone"></i> Llamar</a>
+                        <a id="btn-drawer-email" class="btn btn-sm btn-outline" style="border-color: #475569; color: #475569;"><i class="fa-solid fa-envelope"></i> Email</a>
+                    </div>
+                </div>
+
+                <!-- Products list -->
+                <h3 style="font-size: 1.05rem; color: var(--text-dark); margin-bottom: 0.75rem;"><i class="fa-solid fa-prescription-bottle-medical"></i> Productos Reservados</h3>
+                <div id="drawer-products-container"></div>
+
+                <!-- Total pay card -->
+                <div class="card" style="padding: 1.25rem; margin-bottom: 1.5rem; background-color: #f0fdfa; border-color: #99f6e4;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                        <span style="font-weight: 600; color: #0f766e;">Total a Pagar en Local:</span>
+                        <strong id="drawer-total" style="font-size: 1.5rem; color: #0d9488;"></strong>
+                    </div>
+                    <span id="drawer-total-words" style="color: #64748b; font-size: 0.8rem; font-weight: 500; display: block; line-height: 1.3; margin-top: 0.5rem; border-top: 1px solid #ccfbf1; padding-top: 0.5rem;"></span>
+                </div>
+
+                <!-- Notes -->
+                <div class="card" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+                    <h3 style="margin-top: 0; font-size: 1.05rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; color: var(--text-dark);"><i class="fa-solid fa-comment-dots"></i> Observaciones</h3>
+                    <p id="drawer-notes" style="margin: 0.5rem 0 0 0; font-size: 0.9rem; color: #475569; line-height: 1.4; font-style: italic;"></p>
+                </div>
+
+                <!-- Timeline history -->
+                <h3 style="font-size: 1.05rem; color: var(--text-dark); margin-bottom: 1rem;"><i class="fa-solid fa-clock-rotate-left"></i> Historial de Estado</h3>
+                <div id="drawer-timeline-container" class="timeline"></div>
+            </div>
+
+            <div class="drawer-footer">
+                <button id="btn-drawer-copy-code" class="btn btn-outline" style="flex: 1; border-color: #64748b; color: #64748b;"><i class="fa-solid fa-copy"></i> Copiar código</button>
+                <button id="btn-drawer-print" class="btn btn-outline" style="border-color: #64748b; color: #64748b;"><i class="fa-solid fa-print"></i> Imprimir</button>
+            </div>
+            
+            <div id="drawer-actions-toolbar" style="padding: 1.25rem 1.5rem; border-top: 1px solid var(--border-color); display: flex; gap: 0.75rem; justify-content: stretch;"></div>
+        </div>
+    </div>
+
+    <!-- Confirm State transition Modal -->
+    <div id="transition-confirm-modal" class="modal-overlay" onclick="closeConfirmModal()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div style="padding: 1.25rem; border-bottom: 1px solid var(--border-color);">
+                <h3 id="confirm-modal-title" style="margin: 0; font-size: 1.2rem; color: var(--text-dark);"></h3>
+            </div>
+            <div style="padding: 1.25rem; font-size: 0.95rem; color: #475569;">
+                <div style="margin-bottom: 1rem;">
+                    <span style="color: var(--text-muted); display: block; font-size: 0.8rem; margin-bottom: 0.25rem;">Cliente</span>
+                    <strong id="confirm-modal-client" style="color: var(--text-dark);"></strong>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <span style="color: var(--text-muted); display: block; font-size: 0.8rem; margin-bottom: 0.25rem;">Detalles</span>
+                    <strong id="confirm-modal-details" style="color: var(--text-dark);"></strong>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <span style="color: var(--text-muted); display: block; font-size: 0.8rem; margin-bottom: 0.25rem;">Total</span>
+                    <strong id="confirm-modal-total" style="color: var(--primary);"></strong>
+                </div>
+                <div id="confirm-modal-notes-container" style="display: none; margin-top: 1rem;">
+                    <label for="confirm-modal-notes-textarea" style="color: var(--text-muted); display: block; font-size: 0.8rem; margin-bottom: 0.25rem;">Motivo de la cancelación (Opcional):</label>
+                    <textarea id="confirm-modal-notes-textarea" name="cancelNotes" form="confirm-modal-form" rows="2" class="form-control" style="font-size: 0.9rem;"></textarea>
+                </div>
+            </div>
+            <div style="padding: 1rem 1.25rem; border-top: 1px solid var(--border-color); background-color: #f8fafc; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                <button onclick="closeConfirmModal()" class="btn btn-outline" style="border-color: #64748b; color: #64748b; padding: 0.5rem 1rem; font-size: 0.9rem;">Cancelar</button>
+                <form id="confirm-modal-form" action="" method="post" style="display: inline;">
+                    <input type="hidden" id="confirm-modal-status-input" name="status" value="">
+                    <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">Confirmar apartado</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Static logic helper loader -->
+    <script src="/js/admin-reservations.js" defer></script>
+</body>
+</html>

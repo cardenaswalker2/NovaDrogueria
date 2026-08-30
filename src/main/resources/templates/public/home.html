@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Inicio')}">
+</head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header('home')}"></header>
+
+    <!-- Hero Section -->
+    <style>
+        .hero-title {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+        }
+        .hero-sub {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            opacity: 0.95;
+        }
+        .hero-desc {
+            font-size: 1.15rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+        .search-form {
+            display: flex;
+            background: white;
+            padding: 0.45rem;
+            border-radius: 9999px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+        }
+        .btn-desktop-text {
+            display: inline-block;
+        }
+        .btn-mobile-icon {
+            display: none;
+        }
+        .perks-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            font-size: 0.95rem;
+            font-weight: 500;
+            opacity: 0.95;
+        }
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-sub {
+                font-size: 1.25rem;
+                margin-bottom: 1rem;
+            }
+            .hero-desc {
+                font-size: 1rem;
+                margin-bottom: 1.75rem;
+                padding: 0 1rem;
+            }
+            .btn-desktop-text {
+                display: none;
+            }
+            .btn-mobile-icon {
+                display: inline-block;
+            }
+            .perks-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.75rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    <section style="background: linear-gradient(135deg, #0f766e 0%, #0284c7 100%); color: white; padding: 4rem 0; text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: rgba(255, 255, 255, 0.05); border-radius: 50%;"></div>
+        <div style="position: absolute; bottom: -50px; right: -50px; width: 300px; height: 300px; background: rgba(255, 255, 255, 0.05); border-radius: 50%;"></div>
+        <div class="container" style="max-width: 800px; position: relative; z-index: 2; padding: 0 1rem;">
+            <h1 class="hero-title">Nova Droguería</h1>
+            <p class="hero-sub">Tu salud, más cerca.</p>
+            <p class="hero-desc">Encuentra rápidamente medicamentos, productos de cuidado personal y mucho más.</p>
+            
+            <!-- Search bar -->
+            <div style="max-width: 650px; margin: 0 auto 2rem auto; padding: 0 0.5rem;">
+                <div class="search-wrapper">
+                    <form action="/catalogo" method="get" class="search-form">
+                        <input type="text" name="buscar" placeholder="Busca medicamentos, marcas..." autocomplete="off" style="flex: 1; border: none; padding: 0.75rem 1.25rem; font-size: 1rem; border-radius: 9999px; outline: none; color: #0f172a; min-width: 0;">
+                        <button type="submit" class="btn btn-primary" style="border-radius: 9999px; padding: 0.75rem 1.75rem; font-weight: 600; flex-shrink: 0;">
+                            <span class="btn-desktop-text"><i class="fa-solid fa-magnifying-glass"></i> Buscar</span>
+                            <span class="btn-mobile-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Perks list -->
+            <div class="perks-container">
+                <span><i class="fa-solid fa-circle-check" style="color: #22c55e; margin-right: 0.25rem;"></i> Consulta disponibilidad</span>
+                <span><i class="fa-solid fa-circle-check" style="color: #22c55e; margin-right: 0.25rem;"></i> Aparta tu producto</span>
+                <span><i class="fa-solid fa-circle-check" style="color: #22c55e; margin-right: 0.25rem;"></i> Recógelo en la droguería</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick access Categories -->
+    <section style="padding: 4rem 0; background-color: white;">
+        <div class="container">
+            <h2 style="font-size: 1.8rem; margin-bottom: 2rem; color: #0f172a; font-weight: 700; text-align: center;">Explora por categoría</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.25rem;">
+                <div th:each="category : ${categories}">
+                    <a th:href="@{/catalogo(categoria=${category.id})}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.75rem 1rem; border: 1px solid #e2e8f0; border-radius: 1rem; background-color: #f8fafc; transition: all 0.2s ease-in-out; text-align: center; height: 100%; box-sizing: border-box;"
+                       onmouseover="this.style.borderColor='#0d9488'; this.style.backgroundColor='#f0fdfa'; this.style.transform='translateY(-2px)'"
+                       onmouseout="this.style.borderColor='#e2e8f0'; this.style.backgroundColor='#f8fafc'; this.style.transform='translateY(0)'">
+                        <div style="background-color: #e2e8f0; color: #0d9488; width: 3.5rem; height: 3.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem;">
+                            <i class="fa-solid fa-prescription-bottle-medical"></i>
+                        </div>
+                        <span th:text="${category.name}" style="font-weight: 600; font-size: 1rem; color: #0f172a;"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section style="padding: 5rem 0; background-color: #f8fafc;">
+        <div class="container">
+            <h2 style="font-size: 2.25rem; margin-bottom: 0.5rem; color: #0f172a; font-weight: 700; text-align: center;">Productos Destacados</h2>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 3rem;">Nuestras recomendaciones seleccionadas para ti.</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+                <div th:each="product : ${featuredProducts}" style="background-color: white; border: 1px solid #e2e8f0; border-radius: 1.25rem; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: all 0.2s ease-in-out;"
+                     onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'"
+                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.05)'">
+                    <img th:src="${product.imageUrl}" th:alt="${product.name}" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div style="padding: 1.5rem; display: flex; flex-direction: column; flex: 1;">
+                        <!-- Availability Badge -->
+                        <div style="margin-bottom: 0.75rem;">
+                            <span th:if="${product.stock > 5}" style="background-color: #d1fae5; color: #065f46; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;">🟢 Disponible</span>
+                            <span th:if="${product.stock > 0 && product.stock <= 5}" style="background-color: #fef3c7; color: #92400e; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;">🟡 Poco Stock</span>
+                            <span th:if="${product.stock == 0}" style="background-color: #ffe4e6; color: #991b1b; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;">🔴 Agotado</span>
+                        </div>
+                        
+                        <h3 th:text="${product.name}" style="font-size: 1.25rem; margin-bottom: 0.25rem; font-weight: 700; color: #0f172a;"></h3>
+                        <p th:text="${product.presentation}" style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;"></p>
+                        
+                        <div style="margin-top: auto; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                                <span th:text="${currencyFormatter.format(product.price)}" style="font-size: 1.5rem; font-weight: 800; color: #0f172a;"></span>
+                                <div style="display: flex; gap: 0.35rem;">
+                                    <a th:href="@{'/productos/' + ${product.slug}}" class="btn btn-outline btn-sm" style="border-radius: 0.5rem; padding: 0.4rem 0.75rem;">Detalles</a>
+                                    <a th:if="${product.stock > 0}" th:href="@{'/apartados/crear?productId=' + ${product.id}}" class="btn btn-primary btn-sm" style="border-radius: 0.5rem; padding: 0.4rem 0.75rem;">Apartar</a>
+                                </div>
+                            </div>
+                            <span th:text="${currencyFormatter.formatToWords(product.price)}" style="font-size: 0.75rem; color: #64748b; font-weight: 500; display: block; line-height: 1.2;"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 3.5rem;">
+                <a href="/catalogo" class="btn btn-outline" style="padding: 0.85rem 2.5rem; font-weight: 600; border-radius: 9999px;">Ver Todo el Catálogo <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works Section -->
+    <section style="padding: 5rem 0; background-color: white; text-align: center;">
+        <div class="container">
+            <h2 style="font-size: 2.25rem; margin-bottom: 0.5rem; color: #0f172a; font-weight: 700;">¿Cómo funciona?</h2>
+            <p style="color: var(--text-muted); margin-bottom: 4rem;">Reserva tus productos en 4 simples pasos antes de visitarnos.</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2.5rem; position: relative;">
+                <div style="padding: 1.5rem; background: #f8fafc; border-radius: 1.25rem; border: 1px solid #e2e8f0;">
+                    <div style="color: var(--primary); font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; font-family: 'Outfit';">01</div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem; font-weight: 700; color: #0f172a;">Busca</h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin: 0;">Encuentra el producto que necesitas en nuestro buscador interactivo.</p>
+                </div>
+                <div style="padding: 1.5rem; background: #f8fafc; border-radius: 1.25rem; border: 1px solid #e2e8f0;">
+                    <div style="color: var(--primary); font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; font-family: 'Outfit';">02</div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem; font-weight: 700; color: #0f172a;">Consulta</h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin: 0;">Revisa el precio actualizado y su disponibilidad de stock en tiempo real.</p>
+                </div>
+                <div style="padding: 1.5rem; background: #f8fafc; border-radius: 1.25rem; border: 1px solid #e2e8f0;">
+                    <div style="color: var(--primary); font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; font-family: 'Outfit';">03</div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem; font-weight: 700; color: #0f172a;">Aparta</h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin: 0;">Reserva las unidades que necesitas completando un formulario muy sencillo.</p>
+                </div>
+                <div style="padding: 1.5rem; background: #f8fafc; border-radius: 1.25rem; border: 1px solid #e2e8f0;">
+                    <div style="color: var(--primary); font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; font-family: 'Outfit';">04</div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem; font-weight: 700; color: #0f172a;">Recoge</h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin: 0;">Visítanos en el local, presenta tu código digital de reserva y reclama tu pedido.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reservation Status/Search Section -->
+    <section style="padding: 5rem 0; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); text-align: center;">
+        <div class="container" style="max-width: 650px;">
+            <h2 style="font-size: 2.25rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem;">¿Encontraste lo que buscabas?</h2>
+            <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; margin-bottom: 2.5rem;">Apártalo antes de venir. Reserva tu producto en unos segundos y consulta el estado de tu apartado.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/catalogo" class="btn btn-primary" style="padding: 0.85rem 2rem; font-weight: 600; border-radius: 9999px; min-width: 200px;">
+                    Apartar un producto
+                </a>
+                <a href="/apartados/buscar" class="btn btn-outline" style="padding: 0.85rem 2rem; font-weight: 600; border-radius: 9999px; min-width: 200px; background-color: white;">
+                    Consultar mi apartado
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- AppConfig/General Information Section -->
+    <section style="padding: 5rem 0; background-color: white;">
+        <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 4rem; align-items: center;">
+            <div>
+                <h2 th:text="${config.storeName}" style="font-size: 2.25rem; color: #0f172a; font-weight: 700; margin-bottom: 1.25rem;"></h2>
+                <p th:text="${config.description}" style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; margin-bottom: 2.5rem;"></p>
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem; color: #0f172a; font-weight: 500;">
+                        <div style="background-color: #e0f2fe; color: #0284c7; width: 2.5rem; height: 2.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <span th:text="${config.address}"></span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem; color: #0f172a; font-weight: 500;">
+                        <div style="background-color: #f0fdf4; color: #22c55e; width: 2.5rem; height: 2.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <span th:text="${config.schedule}"></span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem; color: #0f172a; font-weight: 500;">
+                        <div style="background-color: #f5f3ff; color: #8b5cf6; width: 2.5rem; height: 2.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <span th:text="${config.phone}"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- WhatsApp and Contact card -->
+            <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 3rem 2rem; border-radius: 2rem; text-align: center; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.02);">
+                <div style="background-color: #dcfce7; width: 4.5rem; height: 4.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
+                    <i class="fa-brands fa-whatsapp" style="font-size: 2.5rem; color: #22c55e;"></i>
+                </div>
+                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; color: #14532d;">¿Necesitas ayuda?</h3>
+                <p style="color: #166534; margin-bottom: 2rem; font-size: 0.95rem; line-height: 1.5;">Habla con nosotros por WhatsApp. Cotiza fórmulas médicas o aclara dudas en segundos.</p>
+                <a th:href="'https://wa.me/57' + ${config.whatsappNumber}" target="_blank" class="btn" style="background-color: #22c55e; color: white; width: 100%; box-sizing: border-box; padding: 0.85rem; font-weight: 600; border-radius: 9999px; box-shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.2);">
+                    💬 Escribir por WhatsApp
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Badges Section -->
+    <section style="padding: 4rem 0; background-color: #f8fafc; border-top: 1px solid #e2e8f0;">
+        <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 3rem;">
+            <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                <div style="color: var(--primary); font-size: 1.5rem;"><i class="fa-solid fa-circle-check"></i></div>
+                <div>
+                    <h4 style="font-weight: 700; font-size: 1.05rem; margin: 0 0 0.5rem 0; color: #0f172a;">Información actualizada</h4>
+                    <p style="margin: 0; font-size: 0.9rem; color: var(--text-muted); line-height: 1.45;">Consulta disponibilidad de tus productos antes de venir al local.</p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                <div style="color: var(--primary); font-size: 1.5rem;"><i class="fa-solid fa-circle-check"></i></div>
+                <div>
+                    <h4 style="font-weight: 700; font-size: 1.05rem; margin: 0 0 0.5rem 0; color: #0f172a;">Apartados fáciles</h4>
+                    <p style="margin: 0; font-size: 0.9rem; color: var(--text-muted); line-height: 1.45;">Reserva tu producto rápidamente y recógelo sin filas.</p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                <div style="color: var(--primary); font-size: 1.5rem;"><i class="fa-solid fa-circle-check"></i></div>
+                <div>
+                    <h4 style="font-weight: 700; font-size: 1.05rem; margin: 0 0 0.5rem 0; color: #0f172a;">Atención cercana</h4>
+                    <p style="margin: 0; font-size: 0.9rem; color: var(--text-muted); line-height: 1.45;">Estamos para ayudarte en cada paso con asesores farmacéuticos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>
