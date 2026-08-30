@@ -8,16 +8,16 @@ os.makedirs(out_dir, exist_ok=True)
 
 captures = [
     ("01-build-local.png", r"file:///C:/Users/USUARIO/Music/CASA/NovaDrogueria/target/site/jacoco/index.html"),
-    ("02-actions-success.png", "https://github.com/cardenaswalker2/NovaDrogueria/actions/runs/33326051794"),
-    ("03-tests-success.png", "https://github.com/cardenaswalker2/NovaDrogueria/actions/runs/33326051794/job/99296251436"),
-    ("04-jacoco-artifact.png", "https://github.com/cardenaswalker2/NovaDrogueria/actions/runs/33326051794"),
+    ("02-actions-success.png", "https://github.com/cardenaswalker2/NovaDrogueria/actions/runs/33327021879"),
+    ("03-tests-success.png", "https://github.com/cardenaswalker2/NovaDrogueria/actions/runs/33327021879/job/99298861139"),
+    ("04-jacoco-artifact.png", "https://github.com/cardenaswalker2/NovaDrogueria/actions/runs/33327021879"),
     ("05-jacoco-report.png", r"file:///C:/Users/USUARIO/Music/CASA/NovaDrogueria/target/site/jacoco/index.html"),
     ("06-pipeline-failed.png", "https://github.com/cardenaswalker2/NovaDrogueria/actions/runs/33325679422"),
     ("07-pipeline-recovered.png", "https://github.com/cardenaswalker2/NovaDrogueria/actions/runs/33325737975"),
     ("08-branch-protection.png", "https://github.com/cardenaswalker2/NovaDrogueria/settings/branches"),
     ("09-secret-config.png", "https://github.com/cardenaswalker2/NovaDrogueria/settings/secrets/actions"),
-    ("10-pull-request.png", "https://github.com/cardenaswalker2/NovaDrogueria/compare/main...feature/endpoint-estado"),
-    ("11-pull-request-merged.png", "https://github.com/cardenaswalker2/NovaDrogueria/actions/runs/33326051794"),
+    ("10-pull-request.png", "https://github.com/cardenaswalker2/NovaDrogueria/pull/1"),
+    ("11-pull-request-merged.png", "https://github.com/cardenaswalker2/NovaDrogueria/pull/1"),
     ("12-main-final-success.png", "https://github.com/cardenaswalker2/NovaDrogueria/actions?query=branch%3Amain"),
 ]
 
