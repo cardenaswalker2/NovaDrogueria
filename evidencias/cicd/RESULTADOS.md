@@ -1,7 +1,16 @@
 # 📊 REGISTRO OFICIAL DE RESULTADOS CI/CD - NOVADROGUERIA
 
-## 🏢 Proyecto
-- **Nombre del Proyecto**: NovaDrogueria (Sistema Integral Farmacéutico Backend Spring Boot + Frontend App)
+## 🏫 Institución & Equipo
+- **Institución**: Tecnológico Comfenalco
+- **Proyecto**: NovaDrogueria (Sistema Integral Farmacéutico Backend Spring Boot + Frontend App)
+- **Integrantes**:
+  - Luis Cardenas
+  - Cristobal Villamil
+  - Daniel Gutierrez
+  - Jose Castillo
+- **Fecha**: Agosto 2026
+
+## 🏢 Entorno & Stack Técnico
 - **Java**: OpenJDK 17.0.16 (Temurin-17.0.16+8)
 - **Spring Boot**: 3.4.2
 - **Maven**: Apache Maven 3.9.11
