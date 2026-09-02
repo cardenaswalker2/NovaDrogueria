@@ -39,4 +39,12 @@ mongodb.log
 .env
 application-local.properties
 
+### Temporary & Helper Scripts ###
+*.py
+scratch*
+scratch/
+*.pdf
+nova-drogueria-cicd-web/
+
+
 
